@@ -2,7 +2,6 @@
  * Created by missionhealth on 15/10/22.
  */
 
-
 // 存储设备发送过来的数据
 var settings = require('./db_settings');
 var Db = require('mongodb').Db;
@@ -61,7 +60,7 @@ device.get = function(name, callback) {
                 return callback(err);
             }
 
-            collection.findOne({}, function(err, devices) {
+            collection.findOne({"sensor.device_id": 'HX2501'}, {"recv_time": 1, "sensor": 1}, function(err, devices) {
                 mongodb.close();
                 if (err) return callback(err);
                 callback(null, devices);
