@@ -6,6 +6,7 @@
 module.exports = {
     db: 'blog',
     host: 'localhost',
-    port: 27017
+    port: 27017,
+    server_listen_port: 8124
 };
 

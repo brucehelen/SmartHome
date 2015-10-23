@@ -23,8 +23,8 @@ module.exports = device;
 
 device.prototype.save = function(callback) {
     var device = {
-        ipaddress: this.ipaddress,
-        recvtime: this.recvtime,
+        ip_address: this.ipaddress,
+        recv_time: this.recvtime,
         sensor: this.sensor
     };
 
@@ -49,31 +49,6 @@ device.prototype.save = function(callback) {
     });
 };
 
-/*
-    设置设备在线状态
- */
-device.prototype.update = function(ip_address, callback) {
-    if (ip_address.length === 0) return;
-    // 打开数据库
-    mongodb.open(function(err, db) {
-        if (err) return callback(err);
-
-        // 读取online_device集合
-        db.collection('online_device', function(err, collection) {
-            if (err) {
-                mongodb.close();
-                return callback(err);
-            }
-
-            //将用户信息插入device集合
-            collection.update(ip_address, {safe: true}, function(err) {
-                mongodb.close();
-                if (err) return callback(err);
-                callback(null);
-            });
-        });
-    });
-};
 
 device.get = function(name, callback) {
     mongodb.open(function(err, db) {

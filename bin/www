@@ -7,6 +7,20 @@
 var app = require('../app');
 var debug = require('debug')('ickey:server');
 var http = require('http');
+var tcp_server_port = require('../settings.js');
+var tcp_server = require('../device_server/tcp_server');
+
+/**
+ * TCP server for smart devices
+ */
+
+tcp_server.on('error', function(e) {
+  console.error('tcp server error:' + e);
+});
+
+tcp_server.listen(tcp_server_port.server_listen_port, function() { //'listening' listener
+  console.log('tcp server bound[%d]', tcp_server_port.server_listen_port);
+});
 
 /**
  * Get port from environment and store in Express.
