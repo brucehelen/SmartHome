@@ -27,9 +27,14 @@ device.prototype.save = function(callback) {
         sensor: this.sensor
     };
 
+    callback(null);
+
     // 打开数据库
     mongodb.open(function(err, db) {
         if (err) return callback(err);
+        callback(null);
+        mongodb.close();
+        return;
 
         // 读取device集合
         db.collection('device', function(err, collection) {
