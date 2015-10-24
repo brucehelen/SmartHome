@@ -3,7 +3,7 @@
  */
 
 var net = require('net');
-var Db = require('./device_db');
+var db = require('./device_db');
 var port = require('../settings.js');
 
 // save online devices
@@ -53,8 +53,6 @@ var server = net.createServer(function(c) { //'connection' listener
             ]\
         }';
 
-
-
         try {
             recv_json = JSON.parse(data);
         } catch (e) {
@@ -62,33 +60,35 @@ var server = net.createServer(function(c) { //'connection' listener
             return;
         }
 
-        var deviceDb = new Db({
-            ipaddress: client,
-            recvtime: new Date(),
-            sensor: recv_json
+        var device_data = {
+            ip_address: client,
+            recv_time: new Date(),
+            sensor_data: recv_json
+        };
+
+        db({'sensor_data.device_id': 'HX2501'}, function(err, data) {
+            if (err) {
+                console.log('database error ' + err);
+                return;
+            }
+
+            console.log(JSON.stringify(data));
         });
 
-        deviceDb.save(function(err) {
-            if (err) console.log('save data to db error: ' + err);
-        });
+        //db(device_data, function(err) {
+        //    if (err) console.log('db save error ' + err);
+        //});
     };
 
-
-
     c.on('end', function() {
-        //console.log('client disconnect');
         var start = global.online_device[client];
         var end = new Date();
         var connect_time = end.getTime() - start.getTime();
         console.log('client disconnected[%s], elapsed time = %d seconds', client, connect_time/1000);
 
         delete global.online_device[client];
-        //c.removeListener('data', recv_data_callback);
-        //c.removeAllListeners();
     });
-    //c.on('data', function(data) {
-    //    console.log(data);
-    //});
+
     c.on('data', recv_data_callback);
 });
 
