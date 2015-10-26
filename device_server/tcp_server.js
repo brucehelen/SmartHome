@@ -15,7 +15,7 @@ var server = net.createServer(function(c) { //'connection' listener
     console.log('client connected[%s]', client);
 
     // save connected device ip and connect time
-    global.online_device[client] = new Date();
+    global.online_device[client] = Date.now();
 
     var recv_data_callback = function (data) {
         console.log(data);
@@ -23,7 +23,7 @@ var server = net.createServer(function(c) { //'connection' listener
 
         data = '{\
             "name": "MICO3288",\
-                "device_id": "HX2501",\
+                "device_id": "HX2504",\
                 "sensor":\
             [\
                 {\
@@ -47,7 +47,7 @@ var server = net.createServer(function(c) { //'connection' listener
                     "value":\
                     {\
                         "longitude": 121.2356,\
-                        "longitude": 31.2345\
+                        "latitude": 31.2345\
                     }\
                 }\
             ]\
@@ -56,28 +56,28 @@ var server = net.createServer(function(c) { //'connection' listener
         try {
             recv_json = JSON.parse(data);
         } catch (e) {
-            console.log('recv data error: ' + e);
+            console.log('*** recv data error: ' + e);
             return;
         }
 
         var device_data = {
             ip_address: client,
-            recv_time: new Date(),
+            recv_time: Date.now(),
             sensor_data: recv_json
         };
 
-        db({'sensor_data.device_id': 'HX2501'}, function(err, data) {
-            if (err) {
-                console.log('database error ' + err);
-                return;
-            }
+        db.save(device_data, function(err, data) {
+            if (err) console.log('database error ' + err);
 
-            console.log(JSON.stringify(data));
+            db.get('HX2504', function(err, data) {
+                if (err) {
+                    console.log('database error ' + err);
+                    return;
+                }
+
+                console.log(JSON.stringify(data));
+            });
         });
-
-        //db(device_data, function(err) {
-        //    if (err) console.log('db save error ' + err);
-        //});
     };
 
     c.on('end', function() {
