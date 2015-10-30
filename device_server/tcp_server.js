@@ -11,47 +11,21 @@ global.online_device = {};
 
 var server = net.createServer(function(c) { //'connection' listener
 
+    // server address
+    var address = c.address();
+    console.log('server address = %j', address);
+
+    // client address
     var client = c.remoteAddress + ':' + c.remotePort;
     console.log('client connected[%s]', client);
 
     // save connected device ip and connect time
     global.online_device[client] = Date.now();
 
-    var recv_data_callback = function (data) {
-        console.log(data);
-        var recv_json;
+    console.log('online_device -> %j', global.online_device[client]);
 
-        data = '{\
-            "name": "MICO3288",\
-                "device_id": "HX2504",\
-                "sensor":\
-            [\
-                {\
-                    "type": 1,\
-                    "value": 23.5\
-                },\
-                {\
-                    "type":2,\
-                    "value":25\
-                },\
-                {\
-                    "type":3,\
-                    "value":\
-                    {\
-                        "pm2_5": 23.6,\
-                        "pm10":102\
-                    }\
-                },\
-                {\
-                    "type": 4,\
-                    "value":\
-                    {\
-                        "longitude": 121.2356,\
-                        "latitude": 31.2345\
-                    }\
-                }\
-            ]\
-        }';
+    var recv_data_callback = function (data) {
+        var recv_json;
 
         try {
             recv_json = JSON.parse(data);
@@ -74,16 +48,13 @@ var server = net.createServer(function(c) { //'connection' listener
                     console.log('database error ' + err);
                     return;
                 }
-
-                console.log(JSON.stringify(data));
             });
         });
     };
 
     c.on('end', function() {
         var start = global.online_device[client];
-        var end = new Date();
-        var connect_time = end.getTime() - start.getTime();
+        var connect_time = Date.now() - start;
         console.log('client disconnected[%s], elapsed time = %d seconds', client, connect_time/1000);
 
         delete global.online_device[client];
