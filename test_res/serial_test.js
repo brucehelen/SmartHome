@@ -89,7 +89,7 @@ serialPort.on("open", function () {
         console.log('-----------------');
         console.log(data);
 
-        for (var i = 0; i < data.length - 1; i++) {
+        for (var i = 0; i < data.length; i++) {
             // check package header
             if (package_index === 0) {
                 if (data[i] === 0x42 && data[i + 1] === 0x4d) {
