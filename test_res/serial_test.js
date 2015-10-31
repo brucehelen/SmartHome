@@ -99,6 +99,7 @@ serialPort.on("open", function () {
                 whole_package[package_index++] = data[i];
             }
 
+            console.log('***package_index ' + package_index);
             if (package_index === PACKAGE_LEN) {
                 handle_package(whole_package);
                 package_index = 0;
