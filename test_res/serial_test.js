@@ -79,7 +79,7 @@ serialPort.on("open", function () {
         }
     };
 
-    var whole_package = [];
+    var whole_package = new Buffer(PACKAGE_LEN);
     var package_index = 0;
     serialPort.on('data', function(data) {
 
@@ -93,8 +93,7 @@ serialPort.on("open", function () {
                 whole_package[package_index++] = data[i];
             } else if (package_index === PACKAGE_LEN - 1) {
                 whole_package[package_index] = data[i];
-                var buf = Buffer.concat(whole_package, PACKAGE_LEN);
-                handle_package(buf);
+                handle_package(whole_package);
                 package_index = 0;
             }
         }
