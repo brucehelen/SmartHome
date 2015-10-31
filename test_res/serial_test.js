@@ -4,6 +4,8 @@
 
 // 树莓派只有一个串口,默认被用来做console了,需要先禁用
 var SERIAL_PORT = '/dev/ttyAMA0';
+// G3的数据包长度为24字节
+var PACKAGE_LEN = 24;
 
 // serial
 var SerialPort = require("serialport").SerialPort;
@@ -27,15 +29,16 @@ serialPort.on("open", function () {
         return parseInt(data, 16);
     };
 
-    serialPort.on('data', function(data) {
+    // 处理完整的package
+    var handle_package = function(package) {
         // data length should be 24bytes
-        if (data.length !== 24) {
-            console.log('data package length[24, %d]', data.length);
+        if (package.length !== 24) {
+            console.log('data package length[24, %d]', package.length);
             return;
         }
 
         // check data package length, should be 20
-        var package_length = air(data[2]) * 256 + air(data[3]);
+        var package_length = air(package[2]) * 256 + air(package[3]);
         if (package_length !== 20) {
             console.log('RECV data package length error[20, %d]', package_length);
             return;
@@ -43,10 +46,10 @@ serialPort.on("open", function () {
 
         // check CRC
         var crc = 0;
-        for (var i = 0; i < data.length - 2; i++) {
-            crc += data[i];
+        for (var i = 0; i < package.length - 2; i++) {
+            crc += package[i];
         }
-        var package_crc = air(data[22]) * 256 + air(data[23]);
+        var package_crc = air(package[22]) * 256 + air(package[23]);
         if (package_crc !== crc) {
             console.log('data package crc error[%d, %d]', package_crc, crc);
             return;
@@ -54,28 +57,49 @@ serialPort.on("open", function () {
 
         // all is OK, let's get real value
         var index = 4;
-        if (air(data[0]) === 0x42 && air(data[1]) === 0x4d) {
+        if (air(package[0]) === 0x42 && air(package[1]) === 0x4d) {
             // PM1.0(CF=1)
-            var pm1_0 = air(data[index++]) * 256 + air(data[index++]);
+            var pm1_0 = air(package[index++]) * 256 + air(package[index++]);
             // PM2.5(CF=1)
-            var pm2_5 = air(data[index++]) * 256 + air(data[index++]);
+            var pm2_5 = air(package[index++]) * 256 + air(package[index++]);
             // PM10(CF=1)
-            var pm10 = air(data[index++]) * 256 + air(data[index++]);
+            var pm10 = air(package[index++]) * 256 + air(package[index++]);
 
             console.log('(CF=1) -> [%d, %d, %d]', pm1_0, pm2_5, pm10);
 
             // PM1.0(大气环境下)
-            var pm_air_1_0 = air(data[index++]) * 256 + air(data[index++]);
+            var pm_air_1_0 = air(package[index++]) * 256 + air(package[index++]);
             // PM2.5(大气环境下)
-            var pm_air_2_5 = air(data[index++]) * 256 + air(data[index++]);
+            var pm_air_2_5 = air(package[index++]) * 256 + air(package[index++]);
             // PM10(大气环境下)
-            var pm_air_10 = air(data[index++]) * 256 + air(data[index++]);
+            var pm_air_10 = air(package[index++]) * 256 + air(package[index++]);
 
             console.log('大气环境 -> [%d, %d, %d]', pm_air_1_0, pm_air_2_5, pm_air_10);
 
             // 数据7,8,9保留
         } else {
-            console.log('RECV data err: ', data.toString());
+            console.log('RECV data err: ');
+            console.log(package);
+        }
+    };
+
+    var whole_package = {};
+    var package_index = 0;
+    serialPort.on('data', function(data) {
+
+        for (var i = 0; i < data.length - 1; i++) {
+            // check package header
+            if (package_index === 0) {
+                if (air(data[i]) === 0x42 && air(data[i + 1] === 0x4d)) {
+                    whole_package[package_index++] = data[i];
+                }
+            } else if (package_index < PACKAGE_LEN - 1){
+                whole_package[package_index++] = data[i];
+            } else if (package_index === PACKAGE_LEN - 1) {
+                whole_package[package_index] = data[i];
+                handle_package(whole_package);
+                package_index = 0;
+            }
         }
     });
 });
