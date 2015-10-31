@@ -95,10 +95,11 @@ serialPort.on("open", function () {
                 if (data[i] === 0x42 && data[i + 1] === 0x4d) {
                     whole_package[package_index++] = data[i];
                 }
-            } else if (package_index < PACKAGE_LEN - 1){
+            } else if (package_index < PACKAGE_LEN){
                 whole_package[package_index++] = data[i];
-            } else if (package_index === PACKAGE_LEN - 1) {
-                whole_package[package_index] = data[i];
+            }
+
+            if (package_index === PACKAGE_LEN) {
                 handle_package(whole_package);
                 package_index = 0;
             }
