@@ -27,6 +27,8 @@ serialPort.on("open", function () {
 
     // 处理完整的package
     var handle_package = function(package) {
+        console.log('######################');
+        console.log(package);
         // data length should be 24bytes
         if (package.length !== 24) {
             console.log('data package length[24, %d]', package.length);
@@ -84,8 +86,9 @@ serialPort.on("open", function () {
     var package_index = 0;
     serialPort.on('data', function(data) {
         // test
+        console.log('-----------------');
         console.log(data);
-        
+
         for (var i = 0; i < data.length - 1; i++) {
             // check package header
             if (package_index === 0) {
