@@ -45,6 +45,7 @@ serialPort.on("open", function () {
         for (var i = 0; i < package.length - 2; i++) {
             crc += package[i];
         }
+        crc = crc % (256*256);
         var package_crc = package[22] * 256 + package[23];
         if (package_crc !== crc) {
             console.log('data package crc error[%d, %d]', package_crc, crc);
@@ -82,7 +83,9 @@ serialPort.on("open", function () {
     var whole_package = new Buffer(PACKAGE_LEN);
     var package_index = 0;
     serialPort.on('data', function(data) {
-
+        // test
+        console.log(data);
+        
         for (var i = 0; i < data.length - 1; i++) {
             // check package header
             if (package_index === 0) {
