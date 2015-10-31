@@ -27,7 +27,7 @@ serialPort.on("open", function () {
 
     // 处理完整的package
     var handle_package = function(package) {
-        console.log('######################');
+        console.log('#####################');
         console.log(package);
         // data length should be 24bytes
         if (package.length !== 24) {
@@ -86,7 +86,6 @@ serialPort.on("open", function () {
     var package_index = 0;
     serialPort.on('data', function(data) {
         // test
-        console.log('-----------------');
         console.log(data);
 
         for (var i = 0; i < data.length; i++) {
@@ -99,7 +98,6 @@ serialPort.on("open", function () {
                 whole_package[package_index++] = data[i];
             }
 
-            console.log('***package_index ' + package_index);
             if (package_index === PACKAGE_LEN) {
                 handle_package(whole_package);
                 package_index = 0;
