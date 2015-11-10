@@ -43,12 +43,12 @@ var server = net.createServer(function(c) { //'connection' listener
         db.save(device_data, function(err, data) {
             if (err) console.log('database error ' + err);
 
-            db.get('HX2504', function(err, data) {
-                if (err) {
-                    console.log('database error ' + err);
-                    return;
-                }
-            });
+            //db.get('HX2504', function(err, data) {
+            //    if (err) {
+            //        console.log('database error ' + err);
+            //        return;
+            //    }
+            //});
         });
     };
 
