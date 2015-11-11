@@ -26,6 +26,7 @@ wpi.pwmWrite(GPIO_PWM, 0);
 // GPIO_PM2_5: 控制PM2.5传感器打开关闭，1-打开，0-关闭
 var GPIO_PM2_5 = 4;
 wpi.pinMode(GPIO_PM2_5, wpi.OUTPUT);
+wpi.digitalWrite(GPIO_PM2_5, 0);
 
 // ---- Serial ----
 var serialPort = new SerialPort(SERIAL_PORT, {
@@ -42,11 +43,7 @@ var serial_package_array = [];
 var handle_real_pm25 = function(data_package) {
     serial_package_index++;
 
-    if (serial_package_index == 10) {
-        // 接收数据之前清空之前的数据
-        serial_package_array.length = 0;
-        serial_package_array.push(data_package);
-    } else if (serial_package_index > 10 && serial_package_index < 15) {
+    if (serial_package_index > 10 && serial_package_index < 15) {
         serial_package_array.push(data_package);
     } else if (serial_package_index == 15) {
         serial_package_array.push(data_package);
@@ -55,16 +52,16 @@ var handle_real_pm25 = function(data_package) {
         wpi.digitalWrite(GPIO_PM2_5, 0);
         // 计算平均值然后保存数据
         var pm1_0_average = 0, pm2_5_average = 0, pm10_average = 0;
-        for (var data in serial_package_array) {
-            pm1_0_average += data.pm_air_10;
-            pm2_5_average += data.pm_air_2_5;
-            pm10_average += data.pm_air_10;
+        for (var i = 0; i < serial_package_array.length; i++) {
+            var d = serial_package_array[i];
+            pm1_0_average += parseInt(d.pm_air_1_0, 10);
+            pm2_5_average += parseInt(d.pm_air_2_5, 10);
+            pm10_average += parseInt(d.pm_air_10, 10);
         }
-
         pm1_0_average = pm1_0_average / serial_package_array.length;
         pm2_5_average = pm2_5_average / serial_package_array.length;
         pm10_average = pm10_average / serial_package_array.length;
-
+        console.log(" ---- %d, %d, %d ----", pm1_0_average, pm2_5_average, pm10_average);
         var data_save = {
             name: "RPi PM2.5 Sensor",
             device_id: "G3-RPi-1100000",
@@ -82,6 +79,8 @@ var handle_real_pm25 = function(data_package) {
 
         client.write(JSON.stringify(data_save));
 
+        // 清空数组数据
+        serial_package_array.length = 0;
         // 2分钟后再进行下一轮测试
         setTimeout(function () {
             // 打开PM2.5传感器
@@ -102,8 +101,6 @@ var g3 = function() {
 
         // 处理完整的package
         var handle_package = function(data_package) {
-            console.log('#####################');
-            console.log(data_package);
             // data length should be 24bytes
             if (data_package.length !== 24) {
                 console.log('data package length[24, %d]', package.length);
@@ -139,8 +136,6 @@ var g3 = function() {
                 // PM10(CF=1)
                 var pm10 = data_package[index++] * 256 + data_package[index++];
 
-                console.log('(CF=1) -> [%d, %d, %d]', pm1_0, pm2_5, pm10);
-
                 // PM1.0(大气环境下)
                 var pm_air_1_0 = data_package[index++] * 256 + data_package[index++];
                 // PM2.5(大气环境下)
@@ -148,7 +143,6 @@ var g3 = function() {
                 // PM10(大气环境下)
                 var pm_air_10 = data_package[index++] * 256 + data_package[index++];
 
-                console.log('大气环境 -> [%d, %d, %d]', pm_air_1_0, pm_air_2_5, pm_air_10);
                 handle_real_pm25({
                     pm_air_1_0: pm_air_1_0,
                     pm_air_2_5: pm_air_2_5,
@@ -165,9 +159,6 @@ var g3 = function() {
         var whole_package = new Buffer(PACKAGE_LEN);
         var package_index = 0;
         serialPort.on('data', function(data) {
-            // test
-            console.log(data);
-
             for (var i = 0; i < data.length; i++) {
                 // check package header
                 if (package_index === 0) {
