@@ -15,7 +15,7 @@ var initRGBLed = function() {
     wpi.softPwmCreate(LED_B, 0, 100);
 
     var i = 0;
-    setTimeout(function () {
+    setInterval(function(){
         wpi.digitalWrite(LED_R, i);
         wpi.digitalWrite(LED_G, i);
         wpi.digitalWrite(LED_B, i);
