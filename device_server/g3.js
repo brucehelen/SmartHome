@@ -4,24 +4,18 @@
 
 var net = require('net');
 var tcp_server_port = require('../settings.js');
+// serial
+var SerialPort = require("serialport").SerialPort;
+// RPI PWM
+var wpi = require('wiring-pi');
 
 // 树莓派只有一个串口,默认被用来做console了,需要先禁用
 var SERIAL_PORT = '/dev/ttyAMA0';
 // G3的数据包长度为24字节
 var PACKAGE_LEN = 24;
 
-// serial
-var SerialPort = require("serialport").SerialPort;
-// RPI PWM
-var wpi = require('wiring-pi');
-
 // ---- GPIO ----
 wpi.setup('wpi');
-
-// GPIO1: PWM
-var GPIO_PWM = 1;
-wpi.pinMode(GPIO_PWM, wpi.PWM_OUTPUT);
-wpi.pwmWrite(GPIO_PWM, 0);
 
 // GPIO_PM2_5: 控制PM2.5传感器打开关闭，1-打开，0-关闭
 var GPIO_PM2_5 = 4;
