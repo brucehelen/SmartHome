@@ -14,6 +14,20 @@ var SERIAL_PORT = '/dev/ttyAMA0';
 // G3的数据包长度为24字节
 var PACKAGE_LEN = 24;
 
+// RGB LED
+var LED_R = 3;
+var LED_G = 0;
+var LED_B = 2;
+
+var initRGBLed = function() {
+    var ret =  wpi.softPwmCreate(LED_R, 100, 100);
+    if (ret !== 0) console.log(LED_R + 'init error');
+    ret = wpi.softPwmCreate(LED_G, 100, 100);
+    if (ret !== 0) console.log(LED_G + 'init error');
+    ret = wpi.softPwmCreate(LED_B, 100, 100);
+    if (ret !== 0) console.log(LED_B + 'init error');
+};
+
 // ---- GPIO ----
 wpi.setup('wpi');
 
@@ -92,6 +106,9 @@ var g3 = function() {
 
         // 连接TCP服务器
         client_function();
+
+        // 初始化RGB led
+        initRGBLed();
 
         // 处理完整的package
         var handle_package = function(data_package) {
