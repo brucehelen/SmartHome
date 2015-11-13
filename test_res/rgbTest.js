@@ -23,7 +23,7 @@ var initRGBLed = function() {
     var i = 0;
     setInterval(function() {
         if (i < 100) {
-            wpi.softPwmWrite(LED_R, i);
+            wpi.softPwmWrite(LED_R, 100 - i);
             wpi.softPwmWrite(LED_G, 0);
         } else if (i >= 100 && i < 200) {
             wpi.softPwmWrite(LED_R, 0);
