@@ -70,6 +70,11 @@ var handle_real_pm25 = function(data_package) {
         pm2_5_average = pm2_5_average / serial_package_array.length;
         pm10_average = pm10_average / serial_package_array.length;
         console.log(" ---- %d, %d, %d ----", pm1_0_average, pm2_5_average, pm10_average);
+
+        // 控制RGB LED显示不同的值
+        rgbLedControl(pm2_5_average);
+
+        // 将数据保存到数据库
         var data_save = {
             name: "RPi PM2.5 Sensor",
             device_id: "G3-RPi-1100000",
@@ -94,6 +99,19 @@ var handle_real_pm25 = function(data_package) {
             // 打开PM2.5传感器
             wpi.digitalWrite(GPIO_PM2_5, 1);
         }, 2*60*1000);
+    }
+};
+
+var rgbLedControl = function(pm2_5) {
+    if (pm2_5 < 100) {
+        wpi.softPwmWrite(LED_R, 100 - pm2_5);
+        wpi.softPwmWrite(LED_G, 0);
+    } else if (pm2_5 >= 100 && pm2_5 < 200) {
+        wpi.softPwmWrite(LED_R, 0);
+        wpi.softPwmWrite(LED_G, pm2_5 - 100);
+    } else {        // 显示红色
+        wpi.softPwmWrite(LED_R, 0);
+        wpi.softPwmWrite(LED_G, 100);
     }
 };
 
