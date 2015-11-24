@@ -102,13 +102,17 @@ var handle_real_pm25 = function(data_package) {
     }
 };
 
-var rgbLedControl = function(pm2_5) {
-    if (pm2_5 < 100) {
-        wpi.softPwmWrite(LED_R, 100 - pm2_5);
+var rgbLedControl = function(pm) {
+    var pm2_5 = parseInt(pm, 10);
+    if (pm2_5 < 50) {
         wpi.softPwmWrite(LED_G, 0);
-    } else if (pm2_5 >= 100 && pm2_5 < 200) {
+        wpi.softPwmWrite(LED_R, 100);
+    } else if (pm2_5 < 150) {
+        wpi.softPwmWrite(LED_R, parseInt(150 - pm2_5, 10));
+        wpi.softPwmWrite(LED_G, 0);
+    } else if (pm2_5 >= 150 && pm2_5 < 250) {
         wpi.softPwmWrite(LED_R, 0);
-        wpi.softPwmWrite(LED_G, pm2_5 - 100);
+        wpi.softPwmWrite(LED_G, parseInt(pm2_5 - 150, 10));
     } else {        // 显示红色
         wpi.softPwmWrite(LED_R, 0);
         wpi.softPwmWrite(LED_G, 100);
