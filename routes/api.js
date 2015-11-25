@@ -57,6 +57,16 @@ api.post('/get_status', function(req, res, next) {
     console.log('/get_status');
 });
 
+api.get('/bruce_love_helen', function(req, res, next) {
+    var res_json_obj = {
+        "messageId": '1',
+        "message": "明天天气怎么样"
+    };
+
+    res.set('Content-Type','application/json');
+    res.status(200).send(JSON.stringify(res_json_obj));
+});
+
 /**
  * 其他不匹配的情况的处理
  */

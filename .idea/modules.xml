@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ickey.iml" filepath="$PROJECT_DIR$/.idea/ickey.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/SmartHome.iml" filepath="$PROJECT_DIR$/.idea/SmartHome.iml" />
     </modules>
   </component>
 </project>

@@ -14,6 +14,6 @@ var server = net.createServer(function(c) { //'connection' listener
     //c.write('hello\r\n');
     //c.pipe(c);
 });
-server.listen(8124, function() { //'listening' listener
+server.listen(20000, function() { //'listening' listener
     console.log('server bound');
 });
