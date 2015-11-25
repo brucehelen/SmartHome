@@ -20,9 +20,12 @@ var server = net.createServer(function(c) { //'connection' listener
     console.log('client connected[%s]', client);
 
     // save connected device ip and connect time
-    global.online_device[client] = Date.now();
+    global.online_device[client] = {
+        connect_time: Date.now(),
+        c: c
+    };
 
-    console.log('online_device -> %j', global.online_device[client]);
+    console.log('online_device -> %j', global.online_device[client].connect_time);
 
     var recv_data_callback = function (data) {
         var recv_json;
@@ -53,7 +56,7 @@ var server = net.createServer(function(c) { //'connection' listener
     };
 
     c.on('end', function() {
-        var start = global.online_device[client];
+        var start = global.online_device[client].connect_time;
         var connect_time = Date.now() - start;
         console.log('client disconnected[%s], elapsed time = %d seconds', client, connect_time/1000);
 
