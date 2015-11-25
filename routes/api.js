@@ -12,11 +12,11 @@ var db = require('../device_server/device_db');
 api.get('/get_status/:device_id', function(req, res, next) {
     var device_id = req.params.device_id;
     var res_json_obj = {
-        "status": 0,        // API请求是否成功
-        "desc":'',          // API请求结果描述
-        "online": 0,        // 设备是否在线
-        "last_report": '',  // 设备最后一次汇报时间
-        "value":''          // 传感器的具体值
+        status: 0,          // API请求是否成功
+        desc:'',            // API请求结果描述
+        online: 0,          // 设备是否在线
+        last_report: '',    // 设备最后一次汇报时间
+        value:''            // 传感器的具体值
     };
 
     // TODO 检查设备id是否合法

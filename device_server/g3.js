@@ -19,6 +19,8 @@ var LED_R = 3;
 var LED_G = 0;
 var LED_B = 2;
 
+// DS18B20 -> GPIO7
+
 var initRGBLed = function() {
     var ret =  wpi.softPwmCreate(LED_R, 100, 100);
     if (ret !== 0) console.log(LED_R + 'init error');
