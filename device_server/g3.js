@@ -3,6 +3,7 @@
  */
 
 var net = require('net');
+var fs = require('fs');
 var tcp_server_port = require('../settings.js');
 // serial
 var SerialPort = require("serialport").SerialPort;
@@ -20,6 +21,7 @@ var LED_G = 0;
 var LED_B = 2;
 
 // DS18B20 -> GPIO7
+var TEMP_SENSOR_PATH = '/sys/devices/w1_bus_master1/28-0000051095c9/w1_slave';
 
 var initRGBLed = function() {
     var ret =  wpi.softPwmCreate(LED_R, 100, 100);
@@ -49,6 +51,10 @@ var client;
 var serial_package_index = 0;
 var serial_package_array = [];
 
+function read_temp() {
+
+}
+
 // 每次读取15个点,前面10个丢弃,后面5个计算平均值并保存到数据库.然后休眠2分钟
 var handle_real_pm25 = function(data_package) {
     serial_package_index++;
@@ -76,31 +82,51 @@ var handle_real_pm25 = function(data_package) {
         // 控制RGB LED显示不同的值
         rgbLedControl(pm2_5_average);
 
-        // 将数据保存到数据库
-        var data_save = {
-            name: "RPi PM2.5 Sensor",
-            device_id: "G3-RPi-1100000",
-            sensor: [
-                {
-                    type: 3,
-                    value: {
-                        pm1_0: pm1_0_average,
-                        pm2_5: pm2_5_average,
-                        pm10: pm10_average
-                    }
+        // 读取温度
+        fs.readFile(TEMP_SENSOR_PATH, function (err, data) {
+            var temp_value = 0;
+
+            if (err) {
+                console.log(TEMP_SENSOR_PATH + ' read error');
+                temp_value = 0;
+            } else {
+                // 取出温度
+                var arraydata = data.toString().split('t=');
+                if (arraydata[1]) {
+                    temp_value = parseInt(arraydata[1], 10);
                 }
-            ]
-        };
+            }
 
-        client.write(JSON.stringify(data_save));
+            // 将数据保存到数据库
+            var data_save = {
+                name: "RPi2",
+                device_id: "G3-RPi-1100000",
+                sensor: [
+                    {
+                        type: 1,
+                        value: temp_value
+                    },
+                    {
+                        type: 3,
+                        value: {
+                            pm1_0: pm1_0_average,
+                            pm2_5: pm2_5_average,
+                            pm10: pm10_average
+                        }
+                    }
+                ]
+            };
 
-        // 清空数组数据
-        serial_package_array.length = 0;
-        // 2分钟后再进行下一轮测试
-        setTimeout(function () {
-            // 打开PM2.5传感器
-            wpi.digitalWrite(GPIO_PM2_5, 1);
-        }, 2*60*1000);
+            client.write(JSON.stringify(data_save));
+
+            // 清空数组数据
+            serial_package_array.length = 0;
+            // 2分钟后再进行下一轮测试
+            setTimeout(function () {
+                // 打开PM2.5传感器
+                wpi.digitalWrite(GPIO_PM2_5, 1);
+            }, 2*60*1000);
+        });
     }
 };
 
