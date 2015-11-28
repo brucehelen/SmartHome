@@ -255,6 +255,10 @@ var client_function = function() {
     client.on('end', function() {
         console.log('G3: disconnected from server');
     });
+
+    client.on('error', function(err) {
+        console.log('G3: tcp server, ' + err);
+    });
 };
 
 module.exports = g3;
