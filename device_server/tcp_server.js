@@ -63,6 +63,15 @@ var server = net.createServer(function(c) { //'connection' listener
         delete global.online_device[client];
     });
 
+    c.on('error', function(err) {
+        console.log('' + err);
+        var start = global.online_device[client].connect_time;
+        var connect_time = Date.now() - start;
+        console.log('client[%s], elapsed time = %d seconds', client, connect_time/1000);
+  
+        delete global.online_device[client];
+    }
+
     c.on('data', recv_data_callback);
 });
 
