@@ -70,7 +70,7 @@ var server = net.createServer(function(c) { //'connection' listener
         console.log('client[%s], elapsed time = %d seconds', client, connect_time/1000);
   
         delete global.online_device[client];
-    }
+    });
 
     c.on('data', recv_data_callback);
 });
