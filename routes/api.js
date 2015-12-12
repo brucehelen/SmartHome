@@ -136,7 +136,7 @@ api.get('/file/:filename', function (req, res, next) {
     fs.readFile(filename, "binary", function(err, file) {
         if (err) {
             res.writeHead(500, {'Content-Type': 'text/plain'});
-            res.end(err);
+            res.end();
         } else {
             res.writeHead(200, {'Content-Type': 'text/html'});
             res.write(file, "binary");
