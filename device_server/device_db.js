@@ -10,6 +10,11 @@ var device_node = 'device_node';
 
 function device_node_save(data, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            console.log('mongodb err ' + err + ' -> data: ' + data);
+            return;
+        }
+
         var col = db.collection(device_node);
         col.insertOne(data, function(err, r) {
             if (err) {
