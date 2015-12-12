@@ -6,6 +6,9 @@ var express = require('express');
 var api = express.Router();
 var db = require('../device_server/device_db');
 
+var fs = require("fs");
+var path = require("path");
+
 /**
  * 根据设备id获取设备的状态
  */
@@ -123,6 +126,25 @@ api.get('/bruce_love_helen', function(req, res, next) {
     res.set('Content-Type','application/json');
     res.status(200).send(JSON.stringify(res_json_obj));
 });
+
+// 文件服务器
+api.get('/file/:filename', function (req, res, next) {
+    var filename = '/share/db_server/' + req.params.filename;
+
+    // /share/db_server
+    console.log('read file: ' + filename);
+    fs.readFile(filename, "binary", function(err, file) {
+        if (err) {
+            res.writeHead(500, {'Content-Type': 'text/plain'});
+            res.end(err);
+        } else {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write(file, "binary");
+            res.end();
+        }
+    });
+});
+
 
 /**
  * 其他不匹配的情况的处理
