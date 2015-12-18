@@ -3,7 +3,10 @@
  */
 var net = require('net');
 
-var client = net.connect({port: 17479,host:"bruce-zhu.xicp.net"}, function() { //'connect' listener
+var remote_server = "bruce-zhu.xicp.net";
+var remote_server_port = 17479;     // -> 8124
+
+var client = net.connect({port:remote_server_port,host:remote_server}, function() { //'connect' listener
     console.log('connected to server!');
 
     var data = {
@@ -18,6 +21,10 @@ var client = net.connect({port: 17479,host:"bruce-zhu.xicp.net"}, function() { /
 client.on('data', function(data) {
     console.log(data.toString());
     //client.end();
+});
+
+client.on('error', function(err) {
+    console.log(err);
 });
 
 client.on('end', function() {
