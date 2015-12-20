@@ -214,10 +214,19 @@ var client_function = function() {
 
     client.on('end', function() {
         console.log('*** tcp disconnected');
+        client.destroy();
+        // 2分钟后重新连接Server
+        setTimeout(function () {
+            client_function();
+        }, 2*60*1000);
     });
 
     client.on('error', function(err) {
-        console.log('*** connect to server[192.168.2.100:8124] error' + err);
+        console.log('*** client error: ' + err);
+        client.destroy();
+        setTimeout(function() {
+            client_function();
+        }, 2*60*1000);
     });
 };
 

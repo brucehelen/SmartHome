@@ -99,8 +99,8 @@ var handle_real_pm25 = function(data_package) {
 
             // 将数据保存到数据库
             var data_save = {
-                name: "RPi2",
-                device_id: "G3-RPi-1100000",
+                name: "RPi2-inside",
+                device_id: "G3-001",
                 sensor: [
                     {
                         type: 1,
