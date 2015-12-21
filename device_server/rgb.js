@@ -46,38 +46,71 @@ function initRGB() {
 function update_sensor() {
 
     async.series({
-            g3_001: function(callback) {
-                // 读取室内G3传感器最新数据
-                db.get('G3-001', function(err, db_docs) {
-                    if (err) {
-                        console.error('db read error ' + err);
-                        callback(err);
+        g3_001: function(callback) {
+            // 读取室内G3传感器最新数据
+            db.get('G3-001', function(err, db_docs) {
+                if (err) {
+                    console.error('db read error ' + err);
+                    callback(err);
+                }
+
+                if (db_docs.length !== 0) {
+                    var sensor = db_docs[0].sensor_data.sensor;
+                    var pm2_5 = 0;
+                    for (sensor_value in sensor) {
+                        if (sensor_value.type === 3) {
+                            pm2_5 = sensor_value.value.pm2_5;
+                        }
                     }
+                    rgbLedControl(pm2_5);
+                    callback(null, pm2_5);
+                } else {
+                    console.log('db no records');
+                    callback('no records');
+                }
+            });
+        },
+        g3_002: function(callback) {
+            // 读取室外G3传感器最新数据
+            db.get('G3-002', function(err, db_docs) {
+                if (err) {
+                    console.error('db read error ' + err);
+                    callback(err);
+                }
 
-                    if (db_docs.length !== 0) {
-
-                        callback(null, 'value');
-                    } else {
-                        console.log('db no records');
-                        callback('no records')
+                if (db_docs.length !== 0) {
+                    var sensor = db_docs[0].sensor_data.sensor;
+                    var pm2_5 = 0;
+                    for (sensor_value in sensor) {
+                        if (sensor_value.type === 3) {
+                            pm2_5 = sensor_value.value.pm2_5;
+                        }
                     }
-                });
-            },
-            g3_002: function(callback) {
-
-            }
-        }, function(err, results) {
-
-        });
-
-
-
-
-    // 一直更新
-    setTimeout(function () {
-        // 打开PM2.5传感器
-        update_sensor();
-    }, 1*60*1000);
+                    outsideRgbLedControl(pm2_5);
+                    callback(null, pm2_5);
+                    callback(null, 'value');
+                } else {
+                    console.log('db no records');
+                    callback('no records');
+                }
+            });
+        }
+    }, function(err, results) {
+        if (err) {
+            console.log(err);
+            // 发生错误两分钟更新一次
+            setTimeout(function () {
+                // 打开PM2.5传感器
+                update_sensor();
+            }, 2*60*1000);
+        } else {
+            // 一分钟更新一次
+            setTimeout(function () {
+                // 打开PM2.5传感器
+                update_sensor();
+            }, 1*60*1000);
+        }
+    });
 }
 
 // ---- GPIO ----
@@ -119,5 +152,6 @@ function outsideRgbLedControl(pm) {
     }
 }
 
-exports.initRGB = initRGB;
+initRGB();
+//exports.initRGB = initRGB;
 
