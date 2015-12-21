@@ -10,6 +10,7 @@ var http = require('http');
 var tcp_server_port = require('../settings.js');
 var tcp_server = require('../device_server/tcp_server');
 var g3 = require('../device_server/g3');
+var rgb = require('../device_server/rgb');
 
 /**
  * TCP server for smart devices
@@ -22,6 +23,7 @@ tcp_server.on('error', function(e) {
 tcp_server.listen(tcp_server_port.server_listen_port, function() { //'listening' listener
   console.log('tcp server bound[%d]', tcp_server_port.server_listen_port);
   g3();
+  rgb();
 });
 
 /**

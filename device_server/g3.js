@@ -15,25 +15,9 @@ var SERIAL_PORT = '/dev/ttyAMA0';
 // G3的数据包长度为24字节
 var PACKAGE_LEN = 24;
 
-// RGB LED
-var LED_R = 3;
-var LED_G = 0;
-var LED_B = 2;
-
 // DS18B20 -> GPIO7
 var TEMP_SENSOR_PATH = '/sys/devices/w1_bus_master1/28-0000051095c9/w1_slave';
 
-var initRGBLed = function() {
-    var ret =  wpi.softPwmCreate(LED_R, 100, 100);
-    if (ret !== 0) console.log(LED_R + 'init error');
-    ret = wpi.softPwmCreate(LED_G, 100, 100);
-    if (ret !== 0) console.log(LED_G + 'init error');
-    ret = wpi.softPwmCreate(LED_B, 100, 100);
-    if (ret !== 0) console.log(LED_B + 'init error');
-};
-
-// ---- GPIO ----
-wpi.setup('wpi');
 
 // GPIO_PM2_5: 控制PM2.5传感器打开关闭，1-打开，0-关闭
 var GPIO_PM2_5 = 4;
@@ -51,10 +35,6 @@ var client;
 var serial_package_index = 0;
 var serial_package_array = [];
 
-function read_temp() {
-
-}
-
 // 每次读取15个点,前面10个丢弃,后面5个计算平均值并保存到数据库.然后休眠2分钟
 var handle_real_pm25 = function(data_package) {
     serial_package_index++;
@@ -63,8 +43,6 @@ var handle_real_pm25 = function(data_package) {
         serial_package_array.push(data_package);
     } else if (serial_package_index == 15) {
         serial_package_array.push(data_package);
-        serial_package_index = 0;
-        // 关闭PM2.5传感器
         wpi.digitalWrite(GPIO_PM2_5, 0);
         // 计算平均值然后保存数据
         var pm1_0_average = 0, pm2_5_average = 0, pm10_average = 0;
@@ -78,9 +56,6 @@ var handle_real_pm25 = function(data_package) {
         pm2_5_average = pm2_5_average / serial_package_array.length;
         pm10_average = pm10_average / serial_package_array.length;
         console.log(" ---- %d, %d, %d ----", pm1_0_average, pm2_5_average, pm10_average);
-
-        // 控制RGB LED显示不同的值
-        rgbLedControl(pm2_5_average);
 
         // 读取温度
         fs.readFile(TEMP_SENSOR_PATH, function (err, data) {
@@ -130,23 +105,6 @@ var handle_real_pm25 = function(data_package) {
     }
 };
 
-var rgbLedControl = function(pm) {
-    var pm2_5 = parseInt(pm, 10);
-    if (pm2_5 < 50) {
-        wpi.softPwmWrite(LED_G, 0);
-        wpi.softPwmWrite(LED_R, 100);
-    } else if (pm2_5 < 150) {
-        wpi.softPwmWrite(LED_R, parseInt(150 - pm2_5, 10));
-        wpi.softPwmWrite(LED_G, 0);
-    } else if (pm2_5 >= 150 && pm2_5 < 250) {
-        wpi.softPwmWrite(LED_R, 0);
-        wpi.softPwmWrite(LED_G, parseInt(pm2_5 - 150, 10));
-    } else {        // 显示红色
-        wpi.softPwmWrite(LED_R, 0);
-        wpi.softPwmWrite(LED_G, 100);
-    }
-};
-
 var g3 = function() {
     serialPort.on("open", function () {
         console.log(SERIAL_PORT + ' open success');
@@ -156,9 +114,6 @@ var g3 = function() {
 
         // 连接TCP服务器
         client_function();
-
-        // 初始化RGB led
-        initRGBLed();
 
         // 处理完整的package
         var handle_package = function(data_package) {

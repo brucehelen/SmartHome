@@ -57,7 +57,8 @@ function update_sensor() {
                 if (db_docs.length !== 0) {
                     var sensor = db_docs[0].sensor_data.sensor;
                     var pm2_5 = 0;
-                    for (sensor_value in sensor) {
+                    for (var i = 0; i < sensor.length; i++) {
+                        var sensor_value = sensor[i];
                         if (sensor_value.type === 3) {
                             pm2_5 = sensor_value.value.pm2_5;
                         }
@@ -65,7 +66,6 @@ function update_sensor() {
                     rgbLedControl(pm2_5);
                     callback(null, pm2_5);
                 } else {
-                    console.log('G3-001 no records');
                     callback('G3-001 no records');
                 }
             });
@@ -81,16 +81,15 @@ function update_sensor() {
                 if (db_docs.length !== 0) {
                     var sensor = db_docs[0].sensor_data.sensor;
                     var pm2_5 = 0;
-                    for (sensor_value in sensor) {
+                    for (var i = 0; i < sensor.length; i++) {
+                        var sensor_value = sensor[i];
                         if (sensor_value.type === 3) {
                             pm2_5 = sensor_value.value.pm2_5;
                         }
                     }
                     outsideRgbLedControl(pm2_5);
                     callback(null, pm2_5);
-                    callback(null, 'value');
                 } else {
-                    console.log('G3-002 no records');
                     callback('G3-002 no records');
                 }
             });
@@ -153,6 +152,6 @@ function outsideRgbLedControl(pm) {
     }
 }
 
-initRGB();
-//exports.initRGB = initRGB;
+//initRGB();
+module.exports = initRGB;
 
