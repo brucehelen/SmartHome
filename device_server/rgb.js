@@ -65,8 +65,8 @@ function update_sensor() {
                     rgbLedControl(pm2_5);
                     callback(null, pm2_5);
                 } else {
-                    console.log('db no records');
-                    callback('no records');
+                    console.log('G3-001 no records');
+                    callback('G3-001 no records');
                 }
             });
         },
@@ -90,8 +90,8 @@ function update_sensor() {
                     callback(null, pm2_5);
                     callback(null, 'value');
                 } else {
-                    console.log('db no records');
-                    callback('no records');
+                    console.log('G3-002 no records');
+                    callback('G3-002 no records');
                 }
             });
         }
@@ -104,6 +104,7 @@ function update_sensor() {
                 update_sensor();
             }, 2*60*1000);
         } else {
+            console.log(results);
             // 一分钟更新一次
             setTimeout(function () {
                 // 打开PM2.5传感器
