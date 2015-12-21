@@ -96,15 +96,18 @@ var handle_real_pm25 = function(data_package) {
                 ]
             };
 
-            client.write(JSON.stringify(data_save));
+            client.write(JSON.stringify(data_save), function(err) {
+                if (err) {
 
-            // 清空数组数据
-            serial_package_array.length = 0;
-            // 2分钟后再进行下一轮测试
-            setTimeout(function () {
-                // 打开PM2.5传感器
-                wpi.digitalWrite(GPIO_PM2_5, 1);
-            }, 2*60*1000);
+                } else {
+                    // 清空数组数据,2分钟后打开G3传感器再进行下一轮测试
+                    serial_package_array.length = 0;
+                    setTimeout(function () {
+                        // 打开PM2.5传感器
+                        wpi.digitalWrite(GPIO_PM2_5, 1);
+                    }, 2*60*1000);
+                }
+            });
         });
     }
 };
@@ -231,6 +234,5 @@ var client_function = function() {
 };
 
 //module.exports = g3;
-
 
 g3();
