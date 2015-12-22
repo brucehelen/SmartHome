@@ -27,4 +27,16 @@ function relaysControl(value) {
     }
 }
 
-module.exports = relaysControl;
+// 读取传感器状态
+// 0 -> 打开状态
+function readRelayState() {
+    var v = wpi.digitalRead(RELAYS_CONTROL_PIN);
+    if (v === 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+exports.relaysControl = relaysControl;
+exports.readRelayState = readRelayState;

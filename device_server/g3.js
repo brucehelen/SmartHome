@@ -9,6 +9,8 @@ var tcp_server_port = require('../settings.js');
 var SerialPort = require("serialport").SerialPort;
 // RPI PWM
 var wpi = require('wiring-pi');
+// relays
+var relays = require('./relays');
 
 // 树莓派只有一个串口,默认被用来做console了,需要先禁用
 var SERIAL_PORT = '/dev/ttyAMA0';
@@ -217,7 +219,17 @@ var client_function = function() {
     });
 
     client.on('data', function(data) {
-        console.log(data.toString());
+        var control_data;
+        try {
+            control_data = JSON.parse(data);
+        } catch(e) {
+            console.log('*** recv data error: ' + e);
+            return;
+        }
+
+        if (control_data.relays === 0) {
+            relays
+        }
     });
 
     client.on('end', function() {

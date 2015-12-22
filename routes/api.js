@@ -88,13 +88,22 @@ api.post('/set_status/:device_id', function(req, res, next) {
                 if (is_online) {
                     // value
                     var value = req.body.value;
+                    console.log('-> ' + value);
                     var client = is_online.c;
-                    client.write(value, function() {
-                        res_json_obj.desc = 'OK';
-                        res_json_obj.status = 1;
+                    client.write(value, function(err) {
+                        if (err) {
+                            res_json_obj.desc = 'Send data to client error ' + err;
+                            res_json_obj.status = 0;
 
-                        res.set('Content-Type','application/json');
-                        res.status(200).send(JSON.stringify(res_json_obj));
+                            res.set('Content-Type','application/json');
+                            res.status(200).send(JSON.stringify(res_json_obj));
+                        } else {
+                            res_json_obj.desc = 'OK';
+                            res_json_obj.status = 1;
+
+                            res.set('Content-Type','application/json');
+                            res.status(200).send(JSON.stringify(res_json_obj));
+                        }
                     });
                 } else {
                     res_json_obj.desc = 'device[' + device_id + '] offline';

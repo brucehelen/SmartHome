@@ -18,6 +18,9 @@ var LED_OUT_B = 13;
 
 // init inside rgb led
 function initRGBLed() {
+    // ---- GPIO ----
+    wpi.setup('wpi');
+
     var ret =  wpi.softPwmCreate(LED_R, 100, 100);
     if (ret !== 0) console.log(LED_R + ' init error');
     ret = wpi.softPwmCreate(LED_G, 100, 100);
@@ -43,8 +46,8 @@ function initRGB() {
     update_sensor();
 }
 
+// 每隔一分钟从数据库中获取最新的PM2.5数据
 function update_sensor() {
-
     async.series({
         g3_001: function(callback) {
             // 读取室内G3传感器最新数据
@@ -103,18 +106,14 @@ function update_sensor() {
                 update_sensor();
             }, 2*60*1000);
         } else {
-            console.log(results);
             // 一分钟更新一次
             setTimeout(function () {
                 // 打开PM2.5传感器
                 update_sensor();
-            }, 1*60*1000);
+            }, 60*1000);
         }
     });
 }
-
-// ---- GPIO ----
-wpi.setup('wpi');
 
 // inside rgb control
 function rgbLedControl(pm) {
