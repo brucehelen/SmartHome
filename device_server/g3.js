@@ -18,11 +18,16 @@ var PACKAGE_LEN = 24;
 // DS18B20 -> GPIO7
 var TEMP_SENSOR_PATH = '/sys/devices/w1_bus_master1/28-0000051095c9/w1_slave';
 
-
 // GPIO_PM2_5: 控制PM2.5传感器打开关闭，1-打开，0-关闭
 var GPIO_PM2_5 = 4;
-wpi.pinMode(GPIO_PM2_5, wpi.OUTPUT);
-wpi.digitalWrite(GPIO_PM2_5, 0);
+
+function initG3Sensor() {
+    // ---- GPIO ----
+    wpi.setup('wpi');
+
+    wpi.pinMode(GPIO_PM2_5, wpi.OUTPUT);
+    wpi.digitalWrite(GPIO_PM2_5, 0);
+}
 
 // ---- Serial ----
 var serialPort = new SerialPort(SERIAL_PORT, {
@@ -92,20 +97,28 @@ var handle_real_pm25 = function(data_package) {
                 ]
             };
 
-            client.write(JSON.stringify(data_save));
-
-            // 清空数组数据
-            serial_package_array.length = 0;
-            // 2分钟后再进行下一轮测试
-            setTimeout(function () {
-                // 打开PM2.5传感器
-                wpi.digitalWrite(GPIO_PM2_5, 1);
-            }, 2*60*1000);
+            client.write(JSON.stringify(data_save), function(err) {
+                if (err) {
+                    console.log('client write error ' + JSON.stringify(data_save));
+                } else {
+                    // 清空数组数据
+                    serial_package_array.length = 0;
+                    // 2分钟后再进行下一轮测试
+                    setTimeout(function () {
+                        // 打开PM2.5传感器
+                        wpi.digitalWrite(GPIO_PM2_5, 1);
+                    }, 2*60*1000);
+                }
+            });
         });
     }
 };
 
 var g3 = function() {
+
+    // 初始化G3传感器
+    initG3Sensor();
+
     serialPort.on("open", function () {
         console.log(SERIAL_PORT + ' open success');
 

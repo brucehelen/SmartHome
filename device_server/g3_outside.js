@@ -98,7 +98,7 @@ var handle_real_pm25 = function(data_package) {
 
             client.write(JSON.stringify(data_save), function(err) {
                 if (err) {
-
+                    console.log('client write error ' + JSON.stringify(data_save));
                 } else {
                     // 清空数组数据,2分钟后打开G3传感器再进行下一轮测试
                     serial_package_array.length = 0;
