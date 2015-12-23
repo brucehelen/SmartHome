@@ -60,6 +60,23 @@ api.get('/get_status/:device_id', function(req, res, next) {
     }
 });
 
+// 获取GPIO状态
+// /gpio/get?pin=6
+api.get('/gpio/get', function(req, res, next) {
+    var arg = url.parse(req.url).query;
+});
+
+// 获取或者
+api.get('/gpio/relays', function(req, res, next) {
+    var arg = url.parse(req.url).query;
+});
+
+// 设置GPIO状态
+// /gpio/set?pin=6&value=0
+api.get('/gpio/set', function(req, res, next) {
+
+});
+
 api.post('/get_status', function(req, res, next) {
     console.log('/get_status');
 });
