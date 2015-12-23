@@ -5,9 +5,11 @@
 var express = require('express');
 var api = express.Router();
 var db = require('../device_server/device_db');
+var relays = require('../device_server/relays');
 
 var fs = require("fs");
 var path = require("path");
+var url = require('url');
 
 /**
  * 根据设备id获取设备的状态
@@ -19,7 +21,7 @@ api.get('/get_status/:device_id', function(req, res, next) {
         desc:'',            // API请求结果描述
         online: 0,          // 设备是否在线
         last_report: '',    // 设备最后一次汇报时间
-        value:''            // 传感器的具体值
+        value:{}            // 传感器的具体值
     };
 
     // TODO 检查设备id是否合法
@@ -60,25 +62,32 @@ api.get('/get_status/:device_id', function(req, res, next) {
     }
 });
 
-// 获取GPIO状态
-// /gpio/get?pin=6
-api.get('/gpio/get', function(req, res, next) {
-    var arg = url.parse(req.url).query;
-});
-
-// 获取或者
+// 获取继电器状态
+// 设置继电器状态?value=0
 api.get('/gpio/relays', function(req, res, next) {
     var arg = url.parse(req.url).query;
-});
+    var res_json_obj = {};
 
-// 设置GPIO状态
-// /gpio/set?pin=6&value=0
-api.get('/gpio/set', function(req, res, next) {
+    if (arg) {      // 设置继电器状态
+        if (arg.value) {
+            var v = parseInt(arg.value, 10);
+            relays.relaysControl(v);
+            res_json_obj.state = 1;
+            res_json_obj.desc = 'success';
+            res_json_obj.value = v;
+        } else {
+            res_json_obj.state = 0;
+            res_json_obj.desc = 'fail';
+        }
+    } else {        // 获取继电器状态
+        var state = relays.readRelayState();
+        res_json_obj.state = 1;
+        res_json_obj.desc = 'success';
+        res_json_obj.value = state;
+    }
 
-});
-
-api.post('/get_status', function(req, res, next) {
-    console.log('/get_status');
+    res.set('Content-Type','application/json');
+    res.status(200).send(JSON.stringify(res_json_obj));
 });
 
 /*
