@@ -222,13 +222,10 @@ var client_function = function() {
         var control_data;
         try {
             control_data = JSON.parse(data);
+            console.log(control_data);
         } catch(e) {
             console.log('*** recv data error: ' + e);
             return;
-        }
-
-        if (control_data.relays === 0) {
-            relays
         }
     });
 
