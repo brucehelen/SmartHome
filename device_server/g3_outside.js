@@ -72,7 +72,7 @@ var handle_real_pm25 = function(data_package) {
                 // 取出温度
                 var arraydata = data.toString().split('t=');
                 if (arraydata[1]) {
-                    temp_value = parseInt(arraydata[1], 10);
+                    temp_value = parseInt(arraydata[1], 10) / 1000.0;
                 }
             }
 
