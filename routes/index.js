@@ -66,7 +66,7 @@ router.get('/show', function(req, res, next) {
               sensors_value.inside_pm1_0 = sensor_value.value.pm1_0;
               sensors_value.inside_pm2_5 = sensor_value.value.pm2_5;
               sensors_value.inside_pm10 = sensor_value.value.pm10;
-              sensors_value.inside_last_report = new Date(last_report).format("yyyy-MM-dd HH:mm:ss");
+              sensors_value.inside_last_report = new Date(last_report).Format("yyyy-MM-dd HH:mm:ss");
             }
 
             if (sensor_value.type === 1) {
@@ -96,7 +96,7 @@ router.get('/show', function(req, res, next) {
               sensors_value.outside_pm1_0 = sensor_value.value.pm1_0;
               sensors_value.outside_pm2_5 = sensor_value.value.pm2_5;
               sensors_value.outside_pm10 = sensor_value.value.pm10;
-              sensors_value.outside_last_report = new Date(last_report).format("yyyy-MM-dd HH:mm:ss");
+              sensors_value.outside_last_report = new Date(last_report).Format("yyyy-MM-dd HH:mm:ss");
             }
 
             if (sensor_value.type === 1) {
