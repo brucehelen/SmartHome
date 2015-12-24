@@ -65,24 +65,22 @@ api.get('/get_status/:device_id', function(req, res, next) {
 // 获取继电器状态
 // 设置继电器状态?value=0
 api.get('/gpio/relays', function(req, res, next) {
-    var arg = url.parse(req.url).query;
+    var arg = url.parse(req.url, true).query;
+    console.log('gpio/relays: ' + arg);
     var res_json_obj = {};
 
-    if (arg) {      // 设置继电器状态
-        if (arg.value) {
-            var v = parseInt(arg.value, 10);
-            relays.relaysControl(v);
-            res_json_obj.state = 1;
-            res_json_obj.desc = 'success';
-            res_json_obj.value = v;
-        } else {
-            res_json_obj.state = 0;
-            res_json_obj.desc = 'fail';
-        }
+    if (arg.value) {      // 设置继电器状态
+        var v = parseInt(arg.value, 10);
+        console.log('set relays to ' + v);
+        relays.relaysControl(v);
+        console.log('now relays ' + relays.readRelayState());
+        res_json_obj.state = 1;
+        res_json_obj.desc = 'relays set success';
+        res_json_obj.value = relays.readRelayState();
     } else {        // 获取继电器状态
         var state = relays.readRelayState();
         res_json_obj.state = 1;
-        res_json_obj.desc = 'success';
+        res_json_obj.desc = 'relays read success';
         res_json_obj.value = state;
     }
 
