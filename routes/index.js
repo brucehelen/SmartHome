@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var db = require('./device_db');
+var db = require('../device_server/device_db');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
