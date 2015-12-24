@@ -62,8 +62,9 @@ api.get('/get_status/:device_id', function(req, res, next) {
     }
 });
 
-// 获取继电器状态
-// 设置继电器状态?value=0
+// 继电器控制
+// 获取继电器状态/gpio/relays
+// 设置继电器状态/gpio/relays?value=0
 api.get('/gpio/relays', function(req, res, next) {
     var arg = url.parse(req.url, true).query;
     console.log('gpio/relays: ' + arg);
@@ -149,17 +150,6 @@ api.post('/set_status/:device_id', function(req, res, next) {
     }
 });
 
-// helen测试用API
-api.get('/bruce_love_helen', function(req, res, next) {
-    var res_json_obj = {
-        "messageId": '1',
-        "message": "明天天气怎么样"
-    };
-
-    res.set('Content-Type','application/json');
-    res.status(200).send(JSON.stringify(res_json_obj));
-});
-
 // 文件服务器
 api.get('/file/:filename', function (req, res, next) {
     var filename = '/share/db_server/' + req.params.filename;
@@ -176,17 +166,6 @@ api.get('/file/:filename', function (req, res, next) {
             res.end();
         }
     });
-});
-
-/**
- * 其他不匹配的情况的处理
- */
-api.get(function(req, res) {
-
-});
-
-api.post(function(req, res) {
-
 });
 
 module.exports = api;
