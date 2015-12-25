@@ -89,7 +89,7 @@ router.get('/show', function(req, res, next) {
 
         if (db_docs.length !== 0) {
           var sensor = db_docs[0].sensor_data.sensor;
-          var last_report = db_docs.recv_time;
+          var last_report = db_docs[0].recv_time;
           for (var i = 0; i < sensor.length; i++) {
             var sensor_value = sensor[i];
             if (sensor_value.type === 3) {
