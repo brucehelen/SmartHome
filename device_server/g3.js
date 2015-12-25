@@ -49,6 +49,7 @@ function handle_real_pm25 (data_package) {
     if (serial_package_index > 10 && serial_package_index < 15) {
         serial_package_array.push(data_package);
     } else if (serial_package_index == 15) {
+        serial_package_index = 0;
         serial_package_array.push(data_package);
 
         // 关闭传感器
@@ -69,7 +70,6 @@ function handle_real_pm25 (data_package) {
         // 读取温度
         fs.readFile(TEMP_SENSOR_PATH, function (err, data) {
             var temp_value = 0;
-
             if (err) {
                 console.log(TEMP_SENSOR_PATH + ' read error');
                 temp_value = 0;
@@ -204,7 +204,7 @@ function g3() {
         var package_index = 0;
         serialPort.on('data', function(data) {
 
-            console.log('-> ' + data);
+            console.log(data);
 
             for (var i = 0; i < data.length; i++) {
                 // check package header
@@ -212,7 +212,7 @@ function g3() {
                     if (data[i] === 0x42 && data[i + 1] === 0x4d) {
                         whole_package[package_index++] = data[i];
                     }
-                } else if (package_index < PACKAGE_LEN){
+                } else if (package_index < PACKAGE_LEN) {
                     whole_package[package_index++] = data[i];
                 }
 
