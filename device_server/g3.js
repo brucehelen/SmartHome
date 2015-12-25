@@ -45,7 +45,6 @@ var serial_package_array = [];
 function handle_real_pm25 (data_package) {
 
     serial_package_index++;
-
     if (serial_package_index > 10 && serial_package_index < 15) {
         serial_package_array.push(data_package);
     } else if (serial_package_index == 15) {
@@ -100,16 +99,6 @@ function handle_real_pm25 (data_package) {
                     }
                 ]
             };
-
-            //console.log('-> ' + JSON.stringify(data_save));
-            //serial_package_array.length = 0;
-            //// 2分钟后再进行下一轮测试
-            //setTimeout(function () {
-            //    // 打开PM2.5传感器
-            //    wpi.digitalWrite(GPIO_PM2_5, 1);
-            //}, 2*60*1000);
-            //
-            //return;
 
             client.write(JSON.stringify(data_save), function(err) {
                 if (err) {
@@ -204,7 +193,8 @@ function g3() {
         var package_index = 0;
         serialPort.on('data', function(data) {
 
-            console.log(data);
+            // test
+            //console.log(data);
 
             for (var i = 0; i < data.length; i++) {
                 // check package header
