@@ -9,8 +9,6 @@ var tcp_server_port = require('../settings.js');
 var SerialPort = require("serialport").SerialPort;
 // RPI PWM
 var wpi = require('wiring-pi');
-// relays
-var relays = require('./relays');
 
 // 树莓派只有一个串口,默认被用来做console了,需要先禁用
 var SERIAL_PORT = '/dev/ttyAMA0';
@@ -103,15 +101,15 @@ function handle_real_pm25 (data_package) {
                 ]
             };
 
-            console.log('-> ' + JSON.stringify(data_save));
-            serial_package_array.length = 0;
-            // 2分钟后再进行下一轮测试
-            setTimeout(function () {
-                // 打开PM2.5传感器
-                wpi.digitalWrite(GPIO_PM2_5, 1);
-            }, 2*60*1000);
-
-            return;
+            //console.log('-> ' + JSON.stringify(data_save));
+            //serial_package_array.length = 0;
+            //// 2分钟后再进行下一轮测试
+            //setTimeout(function () {
+            //    // 打开PM2.5传感器
+            //    wpi.digitalWrite(GPIO_PM2_5, 1);
+            //}, 2*60*1000);
+            //
+            //return;
 
             client.write(JSON.stringify(data_save), function(err) {
                 if (err) {
@@ -200,7 +198,7 @@ function g3() {
         wpi.digitalWrite(GPIO_PM2_5, 1);
 
         // 连接TCP服务器
-        //client_function();
+        client_function();
 
         var whole_package = new Buffer(PACKAGE_LEN);
         var package_index = 0;

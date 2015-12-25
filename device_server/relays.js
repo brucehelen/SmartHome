@@ -9,7 +9,6 @@ var wpi = require('wiring-pi');
 var RELAYS_CONTROL_PIN = 6;
 
 function initRelays() {
-    wpi.setup('wpi');
     wpi.pinMode(RELAYS_CONTROL_PIN, wpi.OUTPUT);
     wpi.digitalWrite(RELAYS_CONTROL_PIN, 1);
 }
