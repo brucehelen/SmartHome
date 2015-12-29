@@ -84,20 +84,12 @@ function handle_real_pm25 (data_package) {
             var data_save = {
                 name: "RPi2-inside",
                 device_id: "G3-001",
-                sensor: [
-                    {
-                        type: 1,
-                        value: temp_value
-                    },
-                    {
-                        type: 3,
-                        value: {
-                            pm1_0: pm1_0_average,
-                            pm2_5: pm2_5_average,
-                            pm10: pm10_average
-                        }
-                    }
-                ]
+                sensor: {
+                    temp: temp_value,
+                    pm1_0: pm1_0_average,
+                    pm2_5: pm2_5_average,
+                    pm10: pm10_average
+                }
             };
 
             client.write(JSON.stringify(data_save), function(err) {
