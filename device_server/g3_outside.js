@@ -80,20 +80,12 @@ var handle_real_pm25 = function(data_package) {
             var data_save = {
                 name: "RPi2-outside",
                 device_id: "G3-002",
-                sensor: [
-                    {
-                        type: 1,
-                        value: temp_value
-                    },
-                    {
-                        type: 3,
-                        value: {
-                            pm1_0: pm1_0_average,
-                            pm2_5: pm2_5_average,
-                            pm10: pm10_average
-                        }
-                    }
-                ]
+                sensor: {
+                    temp: temp_value,
+                    pm1_0: pm1_0_average,
+                    pm2_5: pm2_5_average,
+                    pm10: pm10_average
+                }
             };
 
             client.write(JSON.stringify(data_save), function(err) {
@@ -220,6 +212,7 @@ var client_function = function() {
         client.destroy();
         // 2分钟后重新连接Server
         setTimeout(function () {
+            wpi.digitalWrite(GPIO_PM2_5, 1);
             client_function();
         }, 2*60*1000);
     });
@@ -228,6 +221,7 @@ var client_function = function() {
         console.log('*** client error: ' + err);
         client.destroy();
         setTimeout(function() {
+            wpi.digitalWrite(GPIO_PM2_5, 1);
             client_function();
         }, 2*60*1000);
     });
