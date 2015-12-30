@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
     console.log('connect_device[%s]=%s', connect_device, global.online_device[connect_device]);
   }
 
-  res.render('index', { title: 'Express' });
+  res.render('home', { title: 'Express' });
 });
 
 router.get('/home', function(req, res, next) {
@@ -88,7 +88,7 @@ router.get('/show', function(req, res, next) {
           sensors_value.outside_pm10 = sensor.pm10;
           sensors_value.outside_temp = sensor.temp;
           sensors_value.outside_last_report = new Date(last_report).Format("yyyy-MM-dd hh:mm:ss");
-          
+
           callback(null, sensors_value);
         } else {
           callback('G3-002 no records');
