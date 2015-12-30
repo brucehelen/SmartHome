@@ -59,13 +59,7 @@ function update_sensor() {
 
                 if (db_docs.length !== 0) {
                     var sensor = db_docs[0].sensor_data.sensor;
-                    var pm2_5 = 0;
-                    for (var i = 0; i < sensor.length; i++) {
-                        var sensor_value = sensor[i];
-                        if (sensor_value.type === 3) {
-                            pm2_5 = sensor_value.value.pm2_5;
-                        }
-                    }
+                    var pm2_5 = sensor.pm2_5;
                     rgbLedControl(pm2_5);
                     callback(null, pm2_5);
                 } else {
@@ -83,13 +77,7 @@ function update_sensor() {
 
                 if (db_docs.length !== 0) {
                     var sensor = db_docs[0].sensor_data.sensor;
-                    var pm2_5 = 0;
-                    for (var i = 0; i < sensor.length; i++) {
-                        var sensor_value = sensor[i];
-                        if (sensor_value.type === 3) {
-                            pm2_5 = sensor_value.value.pm2_5;
-                        }
-                    }
+                    var pm2_5 = sensor.pm2_5;
                     outsideRgbLedControl(pm2_5);
                     callback(null, pm2_5);
                 } else {

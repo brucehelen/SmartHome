@@ -60,19 +60,12 @@ router.get('/show', function(req, res, next) {
         if (db_docs.length !== 0) {
           var sensor = db_docs[0].sensor_data.sensor;
           var last_report = db_docs[0].recv_time;
-          for (var i = 0; i < sensor.length; i++) {
-            var sensor_value = sensor[i];
-            if (sensor_value.type === 3) {
-              sensors_value.inside_pm1_0 = sensor_value.value.pm1_0;
-              sensors_value.inside_pm2_5 = sensor_value.value.pm2_5;
-              sensors_value.inside_pm10 = sensor_value.value.pm10;
-              sensors_value.inside_last_report = new Date(last_report).Format("yyyy-MM-dd hh:mm:ss");
-            }
+          sensors_value.inside_pm1_0 = sensor.pm1_0;
+          sensors_value.inside_pm2_5 = sensor.pm2_5;
+          sensors_value.inside_pm10 = sensor.pm10;
+          sensors_value.inside_last_report = new Date(last_report).Format("yyyy-MM-dd hh:mm:ss");
+          sensors_value.inside_temp = sensor.temp;
 
-            if (sensor_value.type === 1) {
-              sensors_value.inside_temp = sensor_value.value;
-            }
-          }
           callback(null, sensors_value);
         } else {
           callback('G3-001 no records');
@@ -90,19 +83,12 @@ router.get('/show', function(req, res, next) {
         if (db_docs.length !== 0) {
           var sensor = db_docs[0].sensor_data.sensor;
           var last_report = db_docs[0].recv_time;
-          for (var i = 0; i < sensor.length; i++) {
-            var sensor_value = sensor[i];
-            if (sensor_value.type === 3) {
-              sensors_value.outside_pm1_0 = sensor_value.value.pm1_0;
-              sensors_value.outside_pm2_5 = sensor_value.value.pm2_5;
-              sensors_value.outside_pm10 = sensor_value.value.pm10;
-              sensors_value.outside_last_report = new Date(last_report).Format("yyyy-MM-dd hh:mm:ss");
-            }
-
-            if (sensor_value.type === 1) {
-              sensors_value.outside_temp = sensor_value.value;
-            }
-          }
+          sensors_value.outside_pm1_0 = sensor.pm1_0;
+          sensors_value.outside_pm2_5 = sensor.pm2_5;
+          sensors_value.outside_pm10 = sensor.pm10;
+          sensors_value.outside_temp = sensor.temp;
+          sensors_value.outside_last_report = new Date(last_report).Format("yyyy-MM-dd hh:mm:ss");
+          
           callback(null, sensors_value);
         } else {
           callback('G3-002 no records');
