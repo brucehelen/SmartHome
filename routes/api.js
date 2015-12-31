@@ -10,6 +10,7 @@ var relays = require('../device_server/relays');
 var fs = require("fs");
 var path = require("path");
 var url = require('url');
+var async = require('async');
 
 /**
  * 根据设备id获取设备的状态
@@ -25,6 +26,115 @@ api.get('/get_status/:device_id', function(req, res, next) {
     };
 
     // TODO 检查设备id是否合法
+
+    if (device_id) {
+        db.get(device_id, function(err, db_docs) {
+            if (err) {
+                console.error('db read error ' + err);
+                res.send('db read error: ' + device_id);
+                return;
+            }
+
+            if (db_docs.length !== 0) {
+                var first_obj = db_docs[0];
+                var is_online = global.online_device[first_obj.ip_address];
+                res_json_obj.status = 1;
+                res_json_obj.desc = 'OK';
+                if (is_online) {
+                    res_json_obj.online = 1;
+                    res_json_obj.connect_time = is_online.connect_time;
+                } else {
+                    res_json_obj.online = 0;
+                    res_json_obj.connect_time = 0;
+                }
+                res_json_obj.last_report = first_obj.recv_time;
+                res_json_obj.value = first_obj.sensor_data;
+            } else {
+                res_json_obj.desc = 'device id[' + device_id + '] not found';
+            }
+
+            res.set('Content-Type','application/json');
+            res.status(200).send(JSON.stringify(res_json_obj));
+        });
+    } else {
+        res_json_obj.desc = 'device id error';
+        res.set('Content-Type','application/json');
+        res.status(200).send(JSON.stringify(res_json_obj));
+    }
+});
+
+// 获取室内和室外的状态
+api.get('/get_status', function(req, res, next) {
+    var res_json_obj = {
+        status: 0,          // API请求是否成功
+        desc:'',            // API请求结果描述
+        online: 0,          // 设备是否在线
+        last_report: '',    // 设备最后一次汇报时间
+        value:{}            // 传感器的具体值
+    };
+
+    async.series({
+        g3_001: function(callback) {
+            // 读取室内G3传感器最新数据
+            db.get('G3-001', function(err, db_docs) {
+                if (err) {
+                    console.error('db read error ' + err);
+                    callback(err);
+                }
+
+                if (db_docs.length !== 0) {
+                    var first_obj = db_docs[0];
+                    var is_online = global.online_device[first_obj.ip_address];
+                    if (is_online) {
+                        res_json_obj.online = 1;
+                        res_json_obj.connect_time = is_online.connect_time;
+                    } else {
+                        res_json_obj.online = 0;
+                        res_json_obj.connect_time = 0;
+                    }
+
+
+                    res_json_obj.status = 1;
+                    res_json_obj.desc = 'OK';
+                    var sensor = db_docs[0].sensor_data.sensor;
+                    callback(null, sensor);
+                } else {
+                    callback('G3-001 no records');
+                }
+            });
+        },
+        g3_002: function(callback) {
+            // 读取室外G3传感器最新数据
+            db.get('G3-002', function(err, db_docs) {
+                if (err) {
+                    console.error('db read error ' + err);
+                    callback(err);
+                }
+
+                if (db_docs.length !== 0) {
+                    var sensor = db_docs[0].sensor_data.sensor;
+                    callback(null, sensor);
+                } else {
+                    callback('G3-002 no records');
+                }
+            });
+        }
+    }, function(err, results) {
+        if (err) {
+            console.log(err);
+            // 发生错误两分钟更新一次
+            setTimeout(function () {
+                // 打开PM2.5传感器
+                update_sensor();
+            }, 2*60*1000);
+        } else {
+            // 一分钟更新一次
+            setTimeout(function () {
+                // 打开PM2.5传感器
+                update_sensor();
+            }, 60*1000);
+        }
+    });
 
     if (device_id) {
         db.get(device_id, function(err, db_docs) {

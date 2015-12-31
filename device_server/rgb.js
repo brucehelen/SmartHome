@@ -18,9 +18,6 @@ var LED_OUT_B = 13;
 
 // init inside rgb led
 function initRGBLed() {
-    // ---- GPIO ----
-    //wpi.setup('wpi');
-
     var ret =  wpi.softPwmCreate(LED_R, 100, 100);
     if (ret !== 0) console.log(LED_R + ' init error');
     ret = wpi.softPwmCreate(LED_G, 100, 100);
