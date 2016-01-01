@@ -6,6 +6,9 @@
 
 var g3 = require('../device_server/g3');
 var rgb = require('../device_server/rgb');
+var gas = require('../device_server/gas');
+var pir = require('../device_server/pir');
+
 
 var app = require('../app');
 var debug = require('debug')('ickey:server');
@@ -25,6 +28,8 @@ tcp_server.listen(tcp_server_port.server_listen_port, function() { //'listening'
   console.log('tcp server bound[%d]', tcp_server_port.server_listen_port);
   g3();
   rgb();
+  gas.initGASSenosr();
+  pir.initPIRSenosr();
 });
 
 /**
