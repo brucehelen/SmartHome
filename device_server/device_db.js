@@ -31,23 +31,23 @@ function device_node_save(data, callback) {
 // {nameName: bruce, deviceToken: devicetoken}
 function updateUserDeviceToken(user, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
-        console.log('-1-');
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
             return;
         }
 
-        console.log('-2-');
+        console.log(user);
 
         // db.getCollection('user').update({"userName": "Bruce"}, {"$set" : {"iosDeviceToken":"NewDeviceToken"}})
         db.collection('user').updateOne(
             {"userName": user.nameName},
             {
                 "$set": {"iosDeviceToken":user.deviceToken}
-            }, callback);
-
-        console.log('-3-');
+            }, function(err2, results) {
+                callback(err2, results);
+                db.close();
+            });
     });
 }
 
