@@ -36,10 +36,7 @@ function updateUserDeviceToken(user, callback) {
             callback(err);
             return;
         }
-
-        console.log(user);
-
-        // db.getCollection('user').update({"userName": "Bruce"}, {"$set" : {"iosDeviceToken":"NewDeviceToken"}})
+        
         db.collection('user').updateOne(
             {"userName": user.userName},
             {
