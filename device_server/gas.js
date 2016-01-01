@@ -36,4 +36,4 @@ function checkGASSensor() {
     setTimeout(checkGASSensor, 1000);
 }
 
-module.exports = initGASSenosr;
+exports.initGASSenosr = initGASSenosr;

@@ -39,4 +39,4 @@ function checkPIRSensor() {
     setTimeout(checkPIRSensor, 1000);
 }
 
-module.exports = initPIRSenosr;
+exports.initPIRSenosr = initPIRSenosr;
