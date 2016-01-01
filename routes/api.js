@@ -98,6 +98,9 @@ api.get('/uploadDeviceToken', function(req, res, next) {
     var arg = url.parse(req.url, true).query;
     var res_json_obj = {};
 
+    console.log('arg.userName: ' + arg.userName);
+    console.log('arg.deviceToken: ' + arg.deviceToken);
+
     if (arg.userName && arg.deviceToken) {
         db.updateUserDeviceToken(arg, function(err, results) {
             if (err) {
@@ -113,6 +116,8 @@ api.get('/uploadDeviceToken', function(req, res, next) {
         res_json_obj.state = 0;
         res_json_obj.desc = 'param error';
     }
+    
+    console.log(JSON.stringify(res_json_obj));
 
     res.set('Content-Type','application/json');
     res.status(200).send(JSON.stringify(res_json_obj));
