@@ -90,19 +90,45 @@ api.get('/history/:device_id', function(req, res, next) {
     }
 });
 
+//
+// 上传iPhone手机的devicetoken, 推送时会用到
+// /api/uploadDeviceToken?userName=Bruce&deviceToken=dfjdkfjdkfjdkfjdkf
+//
+api.get('/uploadDeviceToken', function(req, res, next) {
+    var arg = url.parse(req.url, true).query;
+    var res_json_obj = {};
+
+    if (arg.userName && arg.deviceToken) {
+        db.updateUserDeviceToken(arg, function(err, results) {
+            if (err) {
+                console.log('uploadDeviceToken ' + err);
+                res_json_obj.state = 0;
+                res_json_obj.desc = 'uploadDeviceToken ' + err;
+            } else {
+                res_json_obj.state = 1;
+                res_json_obj.desc = 'uploadDeviceToken OK -> ' + results;
+            }
+        });
+    } else {
+        res_json_obj.state = 0;
+        res_json_obj.desc = 'param error';
+    }
+
+    res.set('Content-Type','application/json');
+    res.status(200).send(JSON.stringify(res_json_obj));
+});
+
+
 // 继电器控制
 // 获取继电器状态/gpio/relays
 // 设置继电器状态/gpio/relays?value=0
 api.get('/gpio/relays', function(req, res, next) {
     var arg = url.parse(req.url, true).query;
-    console.log('gpio/relays: ' + arg);
     var res_json_obj = {};
 
     if (arg.value) {      // 设置继电器状态
         var v = parseInt(arg.value, 10);
-        console.log('set relays to ' + v);
         relays.relaysControl(v);
-        console.log('now relays ' + relays.readRelayState());
         res_json_obj.state = 1;
         res_json_obj.desc = 'relays set success';
         res_json_obj.value = relays.readRelayState();

@@ -28,6 +28,27 @@ function device_node_save(data, callback) {
     });
 }
 
+// {nameName: bruce, deviceToken: devicetoken}
+function updateUserDeviceToken(user, callback) {
+    MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            console.log('mongodb err ' + err);
+            callback(err);
+            return;
+        }
+
+        // db.getCollection('user').update({"userName": "Bruce"}, {"$set" : {"iosDeviceToken":"NewDeviceToken"}})
+        db.collection('user').updateOne(
+            {"userName": user.nameName},
+            {
+                "$set": {"iosDeviceToken":user.deviceToken}
+            }, function(err, results) {
+                console.log(results);
+                callback(err, results);
+            });
+    });
+}
+
 // 获取数据库中存储的最新记录
 function get_device_node(device_id, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
@@ -76,3 +97,4 @@ function get_device_history(device, callback) {
 exports.get = get_device_node;
 exports.save = device_node_save;
 exports.history = get_device_history;
+exports.updateUserDeviceToken = updateUserDeviceToken;
