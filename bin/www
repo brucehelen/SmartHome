@@ -9,7 +9,6 @@ var rgb = require('../device_server/rgb');
 var gas = require('../device_server/gas');
 var pir = require('../device_server/pir');
 
-
 var app = require('../app');
 var debug = require('debug')('ickey:server');
 var http = require('http');

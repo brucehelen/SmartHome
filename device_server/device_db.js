@@ -28,6 +28,7 @@ function device_node_save(data, callback) {
     });
 }
 
+// 获取数据库中存储的最新记录
 function get_device_node(device_id, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
 
@@ -48,5 +49,30 @@ function get_device_node(device_id, callback) {
     });
 }
 
+// 获取设备的历史记录
+// {device_id, records}
+function get_device_history(device, callback) {
+    MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+
+        var collection = db.collection(device_node);
+        // 默认取100条数据
+        var records = device.records ? device.records : 100;
+
+        collection.find({'sensor_data.device_id': '' + device.device_id}, {"_id":0})
+            .sort({'recv_time':1})
+            .limit(records)
+            .toArray(function(err, docs) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                callback(null, docs);
+                db.close();
+            });
+    });
+}
+
 exports.get = get_device_node;
 exports.save = device_node_save;
+exports.history = get_device_history;
