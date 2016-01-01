@@ -136,6 +136,5 @@ function outsideRgbLedControl(pm) {
     }
 }
 
-//initRGB();
 module.exports = initRGB;
 
