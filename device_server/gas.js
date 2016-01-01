@@ -11,8 +11,9 @@ var GPIO_GAS_COUNT = 2;
 
 function initGASSenosr() {
     wpi.pinMode(GPIO_GAS_PIN, wpi.INPUT);
-    // 1秒检查一次
-    setInterval(checkGASSensor, 1000);
+
+    // 稍等一会儿
+    setTimeout(checkGASSensor, 5000);
 }
 
 var lowCount = 0;
@@ -21,13 +22,18 @@ function checkGASSensor() {
     if (pinValue == wpi.LOW) {
         lowCount++;
         if (lowCount == GPIO_GAS_COUNT) {
+            // TODO: 煤气泄漏，发送警报
             console.log('GAS warning');
             lowCount = 0;
+
+            // 3分钟后再进行检查
+            setTimeout(checkGASSensor, 3*60*1000);
         }
     } else {
         lowCount = 0;
     }
-}
 
+    setTimeout(checkGASSensor, 1000);
+}
 
 module.exports = initGASSenosr;
