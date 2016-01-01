@@ -103,7 +103,8 @@ api.get('/uploadDeviceToken', function(req, res, next) {
 
     if (arg.userName && arg.deviceToken) {
         console.log('1');
-        db.updateUserDeviceToken(arg, function(err, results) {
+        db.updateUserDeviceToken({userName: arg.userName, deviceToken: arg.deviceToken}, function(err, results) {
+            console.log('1111 -> ' + err);
             if (err) {
                 console.log('uploadDeviceToken ' + err);
                 res_json_obj.state = 0;
@@ -112,6 +113,8 @@ api.get('/uploadDeviceToken', function(req, res, next) {
                 res_json_obj.state = 1;
                 res_json_obj.desc = 'uploadDeviceToken OK -> ' + results;
             }
+
+            console.log('2222');
         });
 
         console.log('2');
