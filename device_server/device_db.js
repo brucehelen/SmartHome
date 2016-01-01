@@ -42,10 +42,7 @@ function updateUserDeviceToken(user, callback) {
             {"userName": user.nameName},
             {
                 "$set": {"iosDeviceToken":user.deviceToken}
-            }, function(err, results) {
-                console.log(results);
-                callback(err, results);
-            });
+            }, callback);
     });
 }
 
