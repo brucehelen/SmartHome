@@ -48,6 +48,67 @@ function updateUserDeviceToken(user, callback) {
     });
 }
 
+// 控制是否打开人体传感器检测功能
+function enablePIRRemotePush(user, callback) {
+    MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            console.log('mongodb err ' + err);
+            callback(err);
+            return;
+        }
+
+        if (user.userName && user.iOSEnablePIRPush) {
+            db.collection('user').updateOne(
+                {"userName": user.userName},
+                {
+                    "$set": {"iOSEnablePIRPush":user.iOSEnablePIRPush}
+                }, function(err2, results) {
+                    callback(err2, results);
+                    db.close();
+                });
+        } else if (user.userName) {
+
+        } else {
+
+        }
+    });
+}
+
+// 读取和控制是否打开煤气传感器检测功能
+function enableGASRemotePush(user, callback) {
+    MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            console.log('mongodb err ' + err);
+            callback(err);
+            return;
+        }
+
+        // 控制煤气传感器推送功能
+        if (user.userName && user.iOSEnableGASPush) {
+            db.collection('user').updateOne(
+                {"userName": user.userName},
+                {
+                    "$set": {"iOSEnableGASPush":user.iOSEnableGASPush}
+                }, function(err2, results) {
+                    callback(err2, results);
+                    db.close();
+                });
+        } else {
+            db.collection('user').find({"userName":user.userName}, {"_id":0})
+                .limit(1)
+                .toArray(function(err, docs) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+                    callback(null, docs);
+                    db.close();
+                });
+        }
+    });
+}
+
 // 获取数据库中存储的最新记录
 function get_device_node(device_id, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
@@ -97,3 +158,5 @@ exports.get = get_device_node;
 exports.save = device_node_save;
 exports.history = get_device_history;
 exports.updateUserDeviceToken = updateUserDeviceToken;
+exports.enablePIRRemotePush = enablePIRRemotePush;
+exports.enableGASRemotePush = enableGASRemotePush;
