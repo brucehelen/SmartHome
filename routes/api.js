@@ -106,7 +106,7 @@ api.get('/uploadDeviceToken', function(req, res, next) {
                 res_json_obj.desc = 'uploadDeviceToken ' + err;
             } else {
                 res_json_obj.state = 1;
-                res_json_obj.desc = 'uploadDeviceToken OK -> ' + results;
+                res_json_obj.desc = 'uploadDeviceToken ' + arg.deviceToken + ' OK';
             }
 
             res.set('Content-Type','application/json');

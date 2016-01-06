@@ -16,3 +16,5 @@ body {
 .theme-showcase .navbar .container {
     width: auto;
 }
+
+div.carousel\ slide{ position:relative; width:670px; height:300px; overflow:hidden;}

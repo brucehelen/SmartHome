@@ -36,7 +36,7 @@ function updateUserDeviceToken(user, callback) {
             callback(err);
             return;
         }
-        
+
         db.collection('user').updateOne(
             {"userName": user.userName},
             {
