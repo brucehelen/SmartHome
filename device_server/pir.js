@@ -24,7 +24,7 @@ function sendWarningToUser() {
     db.enablePIRRemotePush({userName: 'Bruce'}, function (err, doc) {
         if (err) {
             console.error('sendWarningToUser ' + err);
-        } else if (doc.iOSEnableGASPush === '1'){
+        } else if (doc.iOSEnablePIRPush === '1'){
             serverPush.pushNotification(doc.iosDeviceToken, '警告: 有人进入监控区域');
         } else {
             console.log('People warning');
