@@ -4,7 +4,7 @@
 
 var apn = require('apn');
 
-var currentPath = global.APP_PATH + '/server_push/';
+var currentPath = global.APP_PATH + '../server_push/';
 
 console.log('currentPath: ' + currentPath);
 

@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 
+global.APP_PATH = process.cwd();
+
 var g3 = require('../device_server/g3');
 var rgb = require('../device_server/rgb');
 var gas = require('../device_server/gas');
