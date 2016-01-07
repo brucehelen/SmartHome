@@ -127,7 +127,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
     var arg = url.parse(req.url, true).query;
     var res_json_obj = {};
 
-    if (arg.userName && arg.iOSEnablePIRPush) {
+    if (arg.userName && arg.iOSEnablePIRPush) { // 设置
         db.enablePIRRemotePush({userName: arg.userName, iOSEnablePIRPush: arg.iOSEnablePIRPush}, function(err, results) {
             if (err) {
                 console.log('enablePIRRemotePush ' + err);
@@ -141,7 +141,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
             res.set('Content-Type','application/json');
             res.status(200).send(JSON.stringify(res_json_obj));
         });
-    } else if (arg.userName) {
+    } else if (arg.userName) {                  // 读取当前的设定
         db.enablePIRRemotePush({userName: arg.userName}, function(err, results) {
             if (err) {
                 console.log('enablePIRRemotePush ' + err);
@@ -150,7 +150,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
             } else {
                 res_json_obj.state = 1;
                 res_json_obj.desc = 'OK';
-                res_json_obj.enablePIRRemotePush = results.enablePIRRemotePush;
+                res_json_obj.enablePIRRemotePush = results[0].enablePIRRemotePush;
             }
 
             res.set('Content-Type','application/json');
@@ -165,7 +165,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
     }
 });
 
-// 打开人体红外传感器的报警推送功能
+// 读取和打开煤气传感器的报警推送功能
 // /api/enablePIRRemotePush?userName=Bruce&iOSEnableGASPush=1
 api.get('/enableGASRemotePush', function(req, res, next) {
     var arg = url.parse(req.url, true).query;
@@ -185,6 +185,21 @@ api.get('/enableGASRemotePush', function(req, res, next) {
             res.set('Content-Type','application/json');
             res.status(200).send(JSON.stringify(res_json_obj));
         });
+    } else if (arg.userName) {                  // 读取当前的设定
+        db.enablePIRRemotePush({userName: arg.userName}, function (err, results) {
+            if (err) {
+                console.log('enableGASRemotePush ' + err);
+                res_json_obj.state = 0;
+                res_json_obj.desc = 'enableGASRemotePush read: ' + err;
+            } else {
+                res_json_obj.state = 1;
+                res_json_obj.desc = 'OK';
+                res_json_obj.enableGASRemotePush = results[0].enableGASRemotePush;
+            }
+
+            res.set('Content-Type', 'application/json');
+            res.status(200).send(JSON.stringify(res_json_obj));
+        });
     } else {
         res_json_obj.state = 0;
         res_json_obj.desc = 'param error';
@@ -193,7 +208,6 @@ api.get('/enableGASRemotePush', function(req, res, next) {
         res.status(200).send(JSON.stringify(res_json_obj));
     }
 });
-
 
 // 继电器控制
 // 获取继电器状态/gpio/relays

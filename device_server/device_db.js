@@ -19,6 +19,7 @@ function device_node_save(data, callback) {
         col.insertOne(data, function(err, r) {
             if (err) {
                 callback(err);
+                db.close();
                 return;
             }
 
@@ -34,6 +35,7 @@ function updateUserDeviceToken(user, callback) {
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
+            db.close();
             return;
         }
 
@@ -54,6 +56,7 @@ function enablePIRRemotePush(user, callback) {
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
+            db.close();
             return;
         }
 
@@ -66,10 +69,19 @@ function enablePIRRemotePush(user, callback) {
                     callback(err2, results);
                     db.close();
                 });
-        } else if (user.userName) {
-
         } else {
+            db.collection('user').find({"userName":user.userName}, {"_id":0})
+                .limit(1)
+                .toArray(function(err, docs) {
+                    if (err) {
+                        callback(err);
+                        db.close();
+                        return;
+                    }
 
+                    callback(null, docs);
+                    db.close();
+                });
         }
     });
 }
@@ -80,11 +92,11 @@ function enableGASRemotePush(user, callback) {
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
+            db.close();
             return;
         }
 
-        // 控制煤气传感器推送功能
-        if (user.userName && user.iOSEnableGASPush) {
+        if (user.userName && user.iOSEnableGASPush) {       // 控制煤气传感器推送功能
             db.collection('user').updateOne(
                 {"userName": user.userName},
                 {
@@ -93,7 +105,7 @@ function enableGASRemotePush(user, callback) {
                     callback(err2, results);
                     db.close();
                 });
-        } else {
+        } else {                                            // 读取
             db.collection('user').find({"userName":user.userName}, {"_id":0})
                 .limit(1)
                 .toArray(function(err, docs) {
@@ -112,9 +124,13 @@ function enableGASRemotePush(user, callback) {
 // 获取数据库中存储的最新记录
 function get_device_node(device_id, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            callback(err);
+            db.close();
+            return;
+        }
 
         var collection = db.collection(device_node);
-
         collection.find({'sensor_data.device_id': '' + device_id}, {"_id":0})
             .sort({'recv_time':-1})
             .limit(1)
@@ -134,11 +150,15 @@ function get_device_node(device_id, callback) {
 // {device_id, records}
 function get_device_history(device, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            callback(err);
+            db.close();
+            return;
+        }
 
         var collection = db.collection(device_node);
         // 默认取100条数据
         var records = device.records ? device.records : 100;
-
         collection.find({'sensor_data.device_id': '' + device.device_id}, {"_id":0})
             .sort({'recv_time':1})
             .limit(records)
