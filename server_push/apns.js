@@ -32,16 +32,20 @@ service.on("socketError", console.error);
 
 // If you plan on sending identical paylods to many devices you can do something like this.
 function serverPushNotification(token, msg) {
-    //var options = {
-    //    "cert": "cert.pem",
-    //    "key": "key.pem",
-    //    "gateway": "gateway.sandbox.push.apple.com"};
-    var note = new apn.notification();
+    var options = {
+        cert: './cert.pem',             /* Certificate file path */
+        key:  './key.pem',              /* Key file path */
+        gateway: 'gateway.sandbox.push.apple.com',/* gateway address gateway.push.apple.com, port 2195*/
+        port: 2195                      /* gateway port */
+    };
+    var myDevice = new apn.Device(token);
+    var note = new apn.notification(options);
     note.setAlertText(msg);
     note.badge = 1;
     note.sound = "default";
+    note.device = myDevice;
 
-    service.pushNotification(note, token);
+    service.pushNotification(note);
 }
 
 exports.pushNotification = serverPushNotification;

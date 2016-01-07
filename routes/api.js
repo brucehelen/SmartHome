@@ -181,7 +181,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
 });
 
 // 读取和打开煤气传感器的报警推送功能
-// /api/enablePIRRemotePush?userName=Bruce&iOSEnableGASPush=1
+// /api/enableGASRemotePush?userName=Bruce&iOSEnableGASPush=1
 api.get('/enableGASRemotePush', function(req, res, next) {
     var arg = url.parse(req.url, true).query;
     var res_json_obj = {};
