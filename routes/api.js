@@ -224,6 +224,26 @@ api.get('/enableGASRemotePush', function(req, res, next) {
     }
 });
 
+api.get('/pushStatus', function(req, res, next) {
+    var res_json_obj = {};
+    db.enablePIRRemotePush({userName: 'Bruce'}, function (err, doc) {
+        if (err) {
+            console.error('enableGASRemotePush ' + err);
+            res_json_obj.state = 0;
+            res_json_obj.desc = 'push status read: ' + err;
+        } else {
+            res_json_obj.state = 1;
+            res_json_obj.desc = 'OK';
+            res_json_obj.pir = doc.iOSEnablePIRPush;
+            res_json_obj.gas = doc.iOSEnableGASPush;
+            res_json_obj.token = doc.iosDeviceToken;
+        }
+
+        res.set('Content-Type', 'application/json');
+        res.status(200).send(JSON.stringify(res_json_obj));
+    });
+});
+
 // 继电器控制
 // 获取继电器状态/gpio/relays
 // 设置继电器状态/gpio/relays?value=0
