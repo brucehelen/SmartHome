@@ -70,7 +70,7 @@ function enablePIRRemotePush(user, callback) {
                     db.close();
                 });
         } else {
-            db.collection('user').find({"userName":user.userName}, {"_id":0})
+            db.collection('user').find({"userName":'' + user.userName}, {"_id":0})
                 .limit(1)
                 .toArray(function(err, docs) {
                     if (err) {
@@ -106,7 +106,7 @@ function enableGASRemotePush(user, callback) {
                     db.close();
                 });
         } else {                                            // 读取
-            db.collection('user').find({"userName":user.userName}, {"_id":0})
+            db.collection('user').find({"userName":'' + user.userName}, {"_id":0})
                 .limit(1)
                 .toArray(function(err, docs) {
                     if (err) {

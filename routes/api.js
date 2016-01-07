@@ -130,7 +130,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
     if (arg.userName && arg.iOSEnablePIRPush) { // 设置
         db.enablePIRRemotePush({userName: arg.userName, iOSEnablePIRPush: arg.iOSEnablePIRPush}, function(err, results) {
             if (err) {
-                console.log('enablePIRRemotePush ' + err);
+                console.error('enablePIRRemotePush ' + err);
                 res_json_obj.state = 0;
                 res_json_obj.desc = 'enablePIRRemotePush ' + err;
             } else {
@@ -143,8 +143,9 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
         });
     } else if (arg.userName) {                  // 读取当前的设定
         db.enablePIRRemotePush({userName: arg.userName}, function(err, results) {
+            console.log("results: " + results);
             if (err) {
-                console.log('enablePIRRemotePush ' + err);
+                console.error('enablePIRRemotePush ' + err);
                 res_json_obj.state = 0;
                 res_json_obj.desc = 'enablePIRRemotePush read: ' + err;
             } else {
@@ -174,7 +175,7 @@ api.get('/enableGASRemotePush', function(req, res, next) {
     if (arg.userName && arg.iOSEnableGASPush) {
         db.enableGASRemotePush({userName: arg.userName, iOSEnableGASPush: arg.iOSEnableGASPush}, function(err, results) {
             if (err) {
-                console.log('enableGASRemotePush ' + err);
+                console.error('enableGASRemotePush ' + err);
                 res_json_obj.state = 0;
                 res_json_obj.desc = 'enableGASRemotePush ' + err;
             } else {
@@ -187,8 +188,9 @@ api.get('/enableGASRemotePush', function(req, res, next) {
         });
     } else if (arg.userName) {                  // 读取当前的设定
         db.enablePIRRemotePush({userName: arg.userName}, function (err, results) {
+            console.log("results: " + results);
             if (err) {
-                console.log('enableGASRemotePush ' + err);
+                console.error('enableGASRemotePush ' + err);
                 res_json_obj.state = 0;
                 res_json_obj.desc = 'enableGASRemotePush read: ' + err;
             } else {
