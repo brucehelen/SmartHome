@@ -71,7 +71,13 @@ function enablePIRRemotePush(user, callback) {
                 });
         } else {
             var cursor = db.collection('user').find({"userName":'' + user.userName}, {"_id":0});
-            cursor.each(callback);
+            cursor.each(function(err, doc) {
+                if (doc != null) {
+                    console.dir(doc);
+                } else {
+                    console.log('doc == null');
+                }
+            });
         }
     });
 }
