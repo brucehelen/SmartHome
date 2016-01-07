@@ -39,14 +39,25 @@ function updateUserDeviceToken(user, callback) {
             return;
         }
 
-        db.collection('user').updateOne(
-            {"userName": user.userName},
-            {
-                "$set": {"iosDeviceToken":user.deviceToken}
-            }, function(err2, results) {
-                callback(err2, results);
-                db.close();
+        if (user.userName && user.deviceToken) {        // 设置deviceToken
+            db.collection('user').updateOne(
+                {"userName": user.userName},
+                {
+                    "$set": {"iosDeviceToken":user.deviceToken}
+                }, function(err2, results) {
+                    callback(err2, results);
+                    db.close();
+                });
+        } else {                                        // 读取deviceToken
+            var cursor = db.collection('user').find({"userName":'' + user.userName}, {"_id":0});
+            cursor.each(function(err, doc) {
+                if (doc != null) {
+                    callback(null, doc);
+                } else {
+                    console.log('doc == null');
+                }
             });
+        }
     });
 }
 
@@ -73,7 +84,7 @@ function enablePIRRemotePush(user, callback) {
             var cursor = db.collection('user').find({"userName":'' + user.userName}, {"_id":0});
             cursor.each(function(err, doc) {
                 if (doc != null) {
-                    console.dir(doc);
+                    callback(null, doc);
                 } else {
                     console.log('doc == null');
                 }
@@ -102,17 +113,14 @@ function enableGASRemotePush(user, callback) {
                     db.close();
                 });
         } else {                                            // 读取
-            db.collection('user').find({"userName":'' + user.userName}, {"_id":0})
-                .limit(1)
-                .toArray(function(err, docs) {
-                    if (err) {
-                        callback(err);
-                        return;
-                    }
-
-                    callback(null, docs);
-                    db.close();
-                });
+            var cursor = db.collection('user').find({"userName":'' + user.userName}, {"_id":0});
+            cursor.each(function(err, doc) {
+                if (doc != null) {
+                    callback(null, doc);
+                } else {
+                    console.log('doc == null');
+                }
+            });
         }
     });
 }

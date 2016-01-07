@@ -112,6 +112,21 @@ api.get('/uploadDeviceToken', function(req, res, next) {
             res.set('Content-Type','application/json');
             res.status(200).send(JSON.stringify(res_json_obj));
         });
+    } else if (arg.userName) {
+        db.enablePIRRemotePush({userName: arg.userName}, function(err, doc) {
+            if (err) {
+                console.error('uploadDeviceToken ' + err);
+                res_json_obj.state = 0;
+                res_json_obj.desc = 'uploadDeviceToken read: ' + err;
+            } else {
+                res_json_obj.state = 1;
+                res_json_obj.desc = 'OK';
+                res_json_obj.iosDeviceToken = doc.iosDeviceToken;
+            }
+
+            res.set('Content-Type','application/json');
+            res.status(200).send(JSON.stringify(res_json_obj));
+        });
     } else {
         res_json_obj.state = 0;
         res_json_obj.desc = 'param error';
@@ -143,7 +158,6 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
         });
     } else if (arg.userName) {                  // 读取当前的设定
         db.enablePIRRemotePush({userName: arg.userName}, function(err, doc) {
-            console.log("results: " + doc);
             if (err) {
                 console.error('enablePIRRemotePush ' + err);
                 res_json_obj.state = 0;
@@ -188,7 +202,6 @@ api.get('/enableGASRemotePush', function(req, res, next) {
         });
     } else if (arg.userName) {                  // 读取当前的设定
         db.enablePIRRemotePush({userName: arg.userName}, function (err, doc) {
-            console.log("results: " + doc);
             if (err) {
                 console.error('enableGASRemotePush ' + err);
                 res_json_obj.state = 0;
