@@ -4,13 +4,11 @@
 
 var apn = require('apn');
 
-var currentPath = global.APP_PATH + '../server_push/';
-
-console.log('currentPath: ' + currentPath);
+console.log(__dirname + '/cert.pem');
 
 var options = {
-    cert: currentPath + 'cert.pem',             /* Certificate file path */
-    key:  currentPath + 'key.pem',              /* Key file path */
+    cert: __dirname + '/cert.pem',             /* Certificate file path */
+    key:  __dirname + '/key.pem',              /* Key file path */
     gateway: 'gateway.sandbox.push.apple.com',  /* gateway address gateway.push.apple.com, port 2195*/
     port: 2195                                  /* gateway port */
 };
