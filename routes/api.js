@@ -165,7 +165,7 @@ api.get('/enablePIRRemotePush', function(req, res, next) {
             } else {
                 res_json_obj.state = 1;
                 res_json_obj.desc = 'OK';
-                res_json_obj.enablePIRRemotePush = doc.enablePIRRemotePush;
+                res_json_obj.iOSEnablePIRPush = doc.iOSEnablePIRPush;
             }
 
             res.set('Content-Type','application/json');
@@ -209,7 +209,7 @@ api.get('/enableGASRemotePush', function(req, res, next) {
             } else {
                 res_json_obj.state = 1;
                 res_json_obj.desc = 'OK';
-                res_json_obj.enableGASRemotePush = doc.enableGASRemotePush;
+                res_json_obj.iOSEnableGASPush = doc.iOSEnableGASPush;
             }
 
             res.set('Content-Type', 'application/json');
