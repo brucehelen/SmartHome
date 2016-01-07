@@ -187,8 +187,8 @@ api.get('/enableGASRemotePush', function(req, res, next) {
             res.status(200).send(JSON.stringify(res_json_obj));
         });
     } else if (arg.userName) {                  // 读取当前的设定
-        db.enablePIRRemotePush({userName: arg.userName}, function (err, results) {
-            console.log("results: " + results);
+        db.enablePIRRemotePush({userName: arg.userName}, function (err, doc) {
+            console.log("results: " + doc);
             if (err) {
                 console.error('enableGASRemotePush ' + err);
                 res_json_obj.state = 0;
@@ -196,7 +196,7 @@ api.get('/enableGASRemotePush', function(req, res, next) {
             } else {
                 res_json_obj.state = 1;
                 res_json_obj.desc = 'OK';
-                res_json_obj.enableGASRemotePush = results[0].enableGASRemotePush;
+                res_json_obj.enableGASRemotePush = doc.enableGASRemotePush;
             }
 
             res.set('Content-Type', 'application/json');
