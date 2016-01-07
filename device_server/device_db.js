@@ -70,18 +70,8 @@ function enablePIRRemotePush(user, callback) {
                     db.close();
                 });
         } else {
-            db.collection('user').find({"userName":'' + user.userName}, {"_id":0})
-                .limit(1)
-                .toArray(function(err, docs) {
-                    if (err) {
-                        callback(err);
-                        db.close();
-                        return;
-                    }
-
-                    callback(null, docs);
-                    db.close();
-                });
+            var cursor = db.collection('user').find({"userName":'' + user.userName}, {"_id":0}).limit(1);
+            cursor.each(callback);
         }
     });
 }
