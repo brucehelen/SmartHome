@@ -52,4 +52,16 @@ function checkPIRSensor() {
     setTimeout(checkPIRSensor, 1000);
 }
 
+// 1为异常
+// 0为正常
+function readPIRStatus() {
+    var pinValue = wpi.digitalRead(GPIO_PIR_PIN);
+    if (pinValue == wpi.HIGH) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 exports.initPIRSenosr = initPIRSenosr;
+exports.readPIRStatus = readPIRStatus;

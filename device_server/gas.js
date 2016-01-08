@@ -50,4 +50,14 @@ function checkGASSensor() {
     setTimeout(checkGASSensor, 1000);
 }
 
+function readGASStatus() {
+    var pinValue = wpi.digitalRead(GPIO_GAS_PIN);
+    if (pinValue == wpi.LOW) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 exports.initGASSenosr = initGASSenosr;
+exports.readGASStatus = readGASStatus;

@@ -6,6 +6,8 @@ var express = require('express');
 var api = express.Router();
 var db = require('../device_server/device_db');
 var relays = require('../device_server/relays');
+var pir = require('../device_server/pir');
+var gas = require('../device_server/gas');
 
 var fs = require("fs");
 var path = require("path");
@@ -224,6 +226,7 @@ api.get('/enableGASRemotePush', function(req, res, next) {
     }
 });
 
+// PIR和GAS传感器推送设定
 api.get('/pushStatus', function(req, res, next) {
     var res_json_obj = {};
     db.enablePIRRemotePush({userName: 'Bruce'}, function (err, doc) {
@@ -242,6 +245,20 @@ api.get('/pushStatus', function(req, res, next) {
         res.set('Content-Type', 'application/json');
         res.status(200).send(JSON.stringify(res_json_obj));
     });
+});
+
+// PIR和GAS状态
+// /api/monitor
+api.get('/monitor', function(req, res, next) {
+    var arg = url.parse(req.url, true).query;
+    var res_json_obj = {};
+    res_json_obj.state = 1;
+    res_json_obj.desc = 'success';
+    res_json_obj.pir = pir.readPIRStatus();
+    res_json_obj.gas = gas.readGASStatus();
+
+    res.set('Content-Type','application/json');
+    res.status(200).send(JSON.stringify(res_json_obj));
 });
 
 // 继电器控制
