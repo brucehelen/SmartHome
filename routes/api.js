@@ -260,8 +260,8 @@ api.get('/monitor', function(req, res, next) {
         } else {
             res_json_obj.state = 1;
             res_json_obj.desc = 'OK';
-            res_json_obj.pirEnable = doc.iOSEnablePIRPush;
-            res_json_obj.gasEnable = doc.iOSEnableGASPush;
+            res_json_obj.pirEnable = parseInt(doc.iOSEnablePIRPush, 10);
+            res_json_obj.gasEnable = parseInt(doc.iOSEnableGASPush, 10);
             res_json_obj.token = doc.iosDeviceToken;
 
             res_json_obj.pir = pir.readPIRStatus();
