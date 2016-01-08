@@ -250,15 +250,27 @@ api.get('/pushStatus', function(req, res, next) {
 // PIR和GAS状态
 // /api/monitor
 api.get('/monitor', function(req, res, next) {
-    var arg = url.parse(req.url, true).query;
     var res_json_obj = {};
-    res_json_obj.state = 1;
-    res_json_obj.desc = 'success';
-    res_json_obj.pir = pir.readPIRStatus();
-    res_json_obj.gas = gas.readGASStatus();
 
-    res.set('Content-Type','application/json');
-    res.status(200).send(JSON.stringify(res_json_obj));
+    db.enablePIRRemotePush({userName: 'Bruce'}, function (err, doc) {
+        if (err) {
+            console.error(err);
+            res_json_obj.state = 0;
+            res_json_obj.desc = 'monitor status read: ' + err;
+        } else {
+            res_json_obj.state = 1;
+            res_json_obj.desc = 'OK';
+            res_json_obj.pirEnable = doc.iOSEnablePIRPush;
+            res_json_obj.gasEnable = doc.iOSEnableGASPush;
+            res_json_obj.token = doc.iosDeviceToken;
+
+            res_json_obj.pir = pir.readPIRStatus();
+            res_json_obj.gas = gas.readGASStatus();
+        }
+
+        res.set('Content-Type', 'application/json');
+        res.status(200).send(JSON.stringify(res_json_obj));
+    });
 });
 
 // 继电器控制
