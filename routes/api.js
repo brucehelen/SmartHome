@@ -280,7 +280,7 @@ api.get('/camera', function(req, res, next) {
     var res_json_obj = {};
     var imageName = 'image' + Date.now() + '.jpg';
     console.log(imageName);
-    exec('sudo raspistill -o /share/db_server/' + imageName + ' -t 1 -w 640 -h 480 -q 100',
+    exec('sudo raspistill -o /share/db_server/' + imageName + ' -t 1 -w 640 -h 480 -rot 180 -q 100',
         function (error, stdout, stderr) {
             if (error !== null) {
                 console.error(error);
