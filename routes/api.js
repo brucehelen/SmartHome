@@ -14,6 +14,7 @@ var path = require("path");
 var url = require('url');
 var async = require('async');
 var exec = require('child_process').exec;
+var mime = require('./mime').mime;
 
 /**
  * 根据设备id获取设备的状态
@@ -279,7 +280,7 @@ api.get('/camera', function(req, res, next) {
     var res_json_obj = {};
     var imageName = 'image' + Date.now() + '.jpg';
     console.log(imageName);
-    exec('raspistill -o /share/db_server/' + imageName + ' -t 1 -w 640 -h 480 -q 100',
+    exec('sudo raspistill -o /share/db_server/' + imageName + ' -t 1 -w 640 -h 480 -q 100',
         function (error, stdout, stderr) {
             if (error !== null) {
                 console.error(error);
@@ -288,7 +289,7 @@ api.get('/camera', function(req, res, next) {
             } else {
                 res_json_obj.state = 1;
                 res_json_obj.desc = 'OK';
-                res_json_obj.image = 'camera.jpg';
+                res_json_obj.image = imageName;
             }
 
             res.set('Content-Type', 'application/json');
@@ -384,6 +385,8 @@ api.post('/set_status/:device_id', function(req, res, next) {
 // 文件服务器
 api.get('/file/:filename', function (req, res, next) {
     var filename = '/share/db_server/' + req.params.filename;
+    var ext = path.extname(filename);
+    var contentType = mime.lookupExtension(ext);
 
     // /share/db_server
     console.log('read file: ' + filename);
@@ -392,7 +395,7 @@ api.get('/file/:filename', function (req, res, next) {
             res.writeHead(500, {'Content-Type': 'text/plain'});
             res.end();
         } else {
-            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.writeHead(200, {'Content-Type': contentType});
             res.write(file, "binary");
             res.end();
         }
