@@ -13,7 +13,7 @@ var fs = require("fs");
 var path = require("path");
 var url = require('url');
 var async = require('async');
-var process = require('child_process');
+var exec = require('child_process').exec;
 
 /**
  * 根据设备id获取设备的状态
@@ -279,7 +279,7 @@ api.get('/camera', function(req, res, next) {
     var res_json_obj = {};
     var imageName = 'image' + Date.now() + '.jpg';
     console.log(imageName);
-    process.exec('raspistill -o /share/db_server/' + imageName + '-t 1 -w 640 -h 480 -q 100',
+    exec('raspistill -o /share/db_server/' + imageName + ' -t 1 -w 640 -h 480 -q 100',
         function (error, stdout, stderr) {
             if (error !== null) {
                 console.error(error);
