@@ -12,6 +12,8 @@ var serverPush = require('../server_push/apns');
 var GPIO_PIR_PIN = 28;
 // 连续发生的次数, 防止误报
 var GPIO_PIR_COUNT = 2;
+// 当前警报状态
+var currentState = 0;
 
 function initPIRSenosr() {
     wpi.pinMode(GPIO_PIR_PIN, wpi.INPUT);
@@ -33,6 +35,7 @@ function sendWarningToUser() {
 }
 
 var lowCount = 0;
+
 function checkPIRSensor() {
     var pinValue = wpi.digitalRead(GPIO_PIR_PIN);
     if (pinValue == wpi.HIGH) {
@@ -41,12 +44,14 @@ function checkPIRSensor() {
             // 有人出现, 检查是否处在防盗状态
             sendWarningToUser();
             lowCount = 0;
+            currentState = 1;
             // 已经发送过警报，3分钟后进行下一轮检查
             setTimeout(checkPIRSensor, 3*60*1000);
             return;
         }
     } else {
         lowCount = 0;
+        currentState = 0;
     }
 
     setTimeout(checkPIRSensor, 1000);
@@ -56,7 +61,7 @@ function checkPIRSensor() {
 // 0为正常
 function readPIRStatus() {
     var pinValue = wpi.digitalRead(GPIO_PIR_PIN);
-    if (pinValue == wpi.HIGH) {
+    if (pinValue == wpi.HIGH || currentState == 1) {
         return 1;
     } else {
         return 0;

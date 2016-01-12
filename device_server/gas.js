@@ -10,6 +10,7 @@ var serverPush = require('../server_push/apns');
 
 var GPIO_GAS_PIN = 29;
 var GPIO_GAS_COUNT = 2;
+var currentState = 0;
 
 function initGASSenosr() {
     wpi.pinMode(GPIO_GAS_PIN, wpi.INPUT);
@@ -39,11 +40,13 @@ function checkGASSensor() {
             // 煤气泄漏，发送警报
             sendWarningToUser();
             lowCount = 0;
+            currentState = 1;
 
             // 3分钟后再进行检查
             setTimeout(checkGASSensor, 3*60*1000);
         }
     } else {
+        currentState = 1;
         lowCount = 0;
     }
 
@@ -52,7 +55,7 @@ function checkGASSensor() {
 
 function readGASStatus() {
     var pinValue = wpi.digitalRead(GPIO_GAS_PIN);
-    if (pinValue == wpi.LOW) {
+    if (pinValue == wpi.LOW || currentState == 1) {
         return 1;
     } else {
         return 0;

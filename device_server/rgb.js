@@ -52,9 +52,10 @@ function update_sensor() {
                 if (err) {
                     console.error('db read error ' + err);
                     callback(err);
+                    return;
                 }
 
-                if (db_docs.length !== 0) {
+                if (db_docs && db_docs.length !== 0) {
                     var sensor = db_docs[0].sensor_data.sensor;
                     var pm2_5 = sensor.pm2_5;
                     rgbLedControl(pm2_5);
@@ -70,6 +71,7 @@ function update_sensor() {
                 if (err) {
                     console.error('db read error ' + err);
                     callback(err);
+                    return;
                 }
 
                 if (db_docs.length !== 0) {
