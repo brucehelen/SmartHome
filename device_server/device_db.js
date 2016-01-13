@@ -29,13 +29,36 @@ function device_node_save(data, callback) {
     });
 }
 
+// 获取数据库中存储的最新记录
+function get_device_node(device_id, callback) {
+    MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        var collection = db.collection(device_node);
+        collection.find({'sensor_data.device_id': '' + device_id}, {"_id":0})
+            .sort({'recv_time':-1})
+            .limit(1)
+            .toArray(function(err, docs) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                callback(null, docs);
+                db.close();
+            });
+    });
+}
+
 // {nameName: bruce, deviceToken: devicetoken}
 function updateUserDeviceToken(user, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
-            db.close();
             return;
         }
 
@@ -67,7 +90,6 @@ function enablePIRRemotePush(user, callback) {
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
-            db.close();
             return;
         }
 
@@ -99,7 +121,6 @@ function enableGASRemotePush(user, callback) {
         if (err) {
             console.log('mongodb err ' + err);
             callback(err);
-            db.close();
             return;
         }
 
@@ -125,38 +146,12 @@ function enableGASRemotePush(user, callback) {
     });
 }
 
-// 获取数据库中存储的最新记录
-function get_device_node(device_id, callback) {
-    MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
-        if (err) {
-            callback(err);
-            db.close();
-            return;
-        }
-
-        var collection = db.collection(device_node);
-        collection.find({'sensor_data.device_id': '' + device_id}, {"_id":0})
-            .sort({'recv_time':-1})
-            .limit(1)
-            .toArray(function(err, docs) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            callback(null, docs);
-            db.close();
-        });
-    });
-}
-
 // 获取设备的历史记录
 // {device_id, records}
 function get_device_history(device, callback) {
     MongoClient.connect('mongodb://localhost:27017/' + settings.db, function(err, db) {
         if (err) {
             callback(err);
-            db.close();
             return;
         }
 
