@@ -1,14 +1,14 @@
-///**
-// * Created by missionhealth on 16/1/6.
-// */
+/**
+ * Created by missionhealth on 16/1/6.
+ */
 
 var apn = require('apn');
 
 console.log(__dirname + '/cert.pem');
 
 var options = {
-    cert: __dirname + '/cert.pem',             /* Certificate file path */
-    key:  __dirname + '/key.pem',              /* Key file path */
+    cert: __dirname + '/cert.pem',              /* Certificate file path */
+    key:  __dirname + '/key.pem',               /* Key file path */
     gateway: 'gateway.sandbox.push.apple.com',  /* gateway address gateway.push.apple.com, port 2195*/
     port: 2195                                  /* gateway port */
 };

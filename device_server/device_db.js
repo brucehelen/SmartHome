@@ -79,6 +79,8 @@ function updateUserDeviceToken(user, callback) {
                 } else {
                     console.log('doc == null');
                 }
+
+                db.close();
             });
         }
     });
@@ -110,6 +112,8 @@ function enablePIRRemotePush(user, callback) {
                 } else {
                     console.log('doc == null');
                 }
+
+                db.close();
             });
         }
     });
@@ -141,6 +145,8 @@ function enableGASRemotePush(user, callback) {
                 } else {
                     console.log('doc == null');
                 }
+
+                db.close();
             });
         }
     });
